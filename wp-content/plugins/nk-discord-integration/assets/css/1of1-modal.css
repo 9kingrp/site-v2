@@ -1,0 +1,273 @@
+/* ─── 1of1 Vehicle Approval Modal ─────────────────────────────────────── */
+
+.nk-1of1-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 999999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0);
+	backdrop-filter: blur(0);
+	pointer-events: none;
+	opacity: 0;
+	transition: background 0.3s ease, backdrop-filter 0.3s ease, opacity 0.3s ease;
+}
+
+.nk-1of1-overlay--visible {
+	background: rgba(0, 0, 0, 0.7);
+	backdrop-filter: blur(6px);
+	pointer-events: auto;
+	opacity: 1;
+}
+
+/* ── Modal box ────────────────────────────────────────────────────────── */
+
+.nk-1of1-modal {
+	position: relative;
+	width: 90%;
+	max-width: 480px;
+	background: #1e1e24;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 16px;
+	padding: 32px;
+	box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+	color: #e0e0e0;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	transform: scale(0.92) translateY(20px);
+	transition: transform 0.3s ease;
+}
+
+.nk-1of1-overlay--visible .nk-1of1-modal {
+	transform: scale(1) translateY(0);
+}
+
+/* ── Close button ─────────────────────────────────────────────────────── */
+
+.nk-1of1-close {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	background: none;
+	border: none;
+	color: #888;
+	font-size: 24px;
+	line-height: 1;
+	cursor: pointer;
+	padding: 4px 8px;
+	border-radius: 6px;
+	transition: color 0.2s, background 0.2s;
+}
+
+.nk-1of1-close:hover {
+	color: #fff;
+	background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Header ───────────────────────────────────────────────────────────── */
+
+.nk-1of1-header {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.nk-1of1-badge {
+	display: inline-block;
+	background: linear-gradient(135deg, #FD6D01, #B85C0F);
+	color: #1a1a1a;
+	font-weight: 800;
+	font-size: 11px;
+	letter-spacing: 1.5px;
+	text-transform: uppercase;
+	padding: 5px 14px;
+	border-radius: 20px;
+	margin-bottom: 12px;
+	color: #fff;
+}
+
+.nk-1of1-header h2 {
+	margin: 0;
+	font-size: 20px;
+	font-weight: 700;
+	color: #ffffff;
+	letter-spacing: -0.3px;
+}
+
+/* ── Body ─────────────────────────────────────────────────────────────── */
+
+.nk-1of1-body {
+	text-align: center;
+}
+
+.nk-1of1-desc {
+	font-size: 14px;
+	color: #a0a0a0;
+	line-height: 1.6;
+	margin: 0 0 24px;
+}
+
+.nk-1of1-question {
+	font-size: 15px;
+	font-weight: 600;
+	color: #d0d0d0;
+	margin: 0 0 16px;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────── */
+
+.nk-1of1-buttons {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.nk-1of1-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 22px;
+	font-size: 14px;
+	font-weight: 600;
+	border: none;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+	min-width: 140px;
+}
+
+.nk-1of1-btn:active {
+	transform: scale(0.97);
+}
+
+/* Yes / Verify — gold accent */
+.nk-1of1-btn--yes,
+.nk-1of1-btn--verify {
+	background: linear-gradient(135deg, #FD6D01, #B85C0F);
+	color: #fff;
+	box-shadow: 0 2px 12px rgba(253, 109, 1, 0.3);
+}
+
+.nk-1of1-btn--yes:hover,
+.nk-1of1-btn--verify:hover {
+	background: linear-gradient(135deg, #B85C0F, #FD6D01);
+	box-shadow: 0 4px 20px rgba(253, 109, 1, 0.45);
+	color: #fff;
+}
+
+.nk-1of1-btn--verify:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* No — Discord blurple */
+.nk-1of1-btn--no {
+	background: #5865f2;
+	color: #fff;
+	box-shadow: 0 2px 12px rgba(88, 101, 242, 0.3);
+}
+
+.nk-1of1-btn--no:hover {
+	background: #4752c4;
+	box-shadow: 0 4px 20px rgba(88, 101, 242, 0.45);
+}
+
+/* Cancel — subtle */
+.nk-1of1-btn--cancel {
+	background: rgba(255, 255, 255, 0.06);
+	color: #999;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nk-1of1-btn--cancel:hover {
+	background: rgba(255, 255, 255, 0.1);
+	color: #ccc;
+}
+
+/* ── Ticket input ─────────────────────────────────────────────────────── */
+
+.nk-1of1-label {
+	display: block;
+	text-align: left;
+	font-size: 13px;
+	font-weight: 600;
+	color: #b0b0b0;
+	margin-bottom: 6px;
+}
+
+.nk-1of1-hint {
+	text-align: left;
+	font-size: 12px;
+	color: #777;
+	margin: 0 0 10px;
+	line-height: 1.4;
+}
+
+.nk-1of1-input {
+	width: 100%;
+	padding: 10px 14px;
+	font-size: 14px;
+	background: #2a2a32;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 10px;
+	color: #e0e0e0;
+	outline: none;
+	transition: border-color 0.2s, box-shadow 0.2s;
+	box-sizing: border-box;
+	margin-bottom: 12px;
+}
+
+.nk-1of1-input:focus {
+	border-color: #c9a84c;
+	box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+}
+
+.nk-1of1-input::placeholder {
+	color: #666;
+}
+
+/* ── Feedback messages ────────────────────────────────────────────────── */
+
+.nk-1of1-feedback {
+	min-height: 20px;
+	font-size: 13px;
+	margin-bottom: 14px;
+	transition: color 0.2s;
+}
+
+.nk-1of1-feedback--error {
+	color: #f04747;
+}
+
+.nk-1of1-feedback--success {
+	color: #43b581;
+}
+
+/* ── Redirect step ────────────────────────────────────────────────────── */
+
+.nk-1of1-redirect-msg {
+	font-size: 15px;
+	color: #a0a0a0;
+	padding: 20px 0;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+
+@media (max-width: 520px) {
+	.nk-1of1-modal {
+		padding: 24px 20px;
+		border-radius: 12px;
+	}
+
+	.nk-1of1-header h2 {
+		font-size: 17px;
+	}
+
+	.nk-1of1-buttons {
+		flex-direction: column;
+	}
+
+	.nk-1of1-btn {
+		width: 100%;
+	}
+}

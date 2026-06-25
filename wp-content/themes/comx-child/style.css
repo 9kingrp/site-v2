@@ -1,0 +1,131 @@
+/*
+Theme Name: ComX Child Theme
+Template: comx
+Theme URI: https://comx.ancorathemes.com/
+Description: ComX Child Theme
+Author: AncoraThemes
+Author URI: https://ancorathemes.com/
+Version: 1.0.0
+Tested up to: 6.9
+Requires at least: 5.5
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Tags: blog, e-commerce, portfolio, grid-layout, one-column, two-columns, three-columns, four-columns, left-sidebar, right-sidebar, custom-background, custom-colors, custom-header, custom-logo, custom-menu, editor-style, featured-image-header, featured-images, flexible-header, footer-widgets, full-width-template, microformats, post-formats, sticky-post, theme-options, threaded-comments, translation-ready, block-styles, wide-blocks
+Text Domain: comx
+*/
+
+
+/* =Child-Theme customization starts here
+------------------------------------------------------------ */
+.woocommerce ul.products li.product .woocommerce-loop-product__title {
+    font-size: var(--theme-font-h3_font-size);
+}
+
+.woocommerce ul.products li.product .price {
+    color: #fff;
+}
+
+.product-category .post_data {
+    display: none;
+}
+
+.woocommerce-no-products-found {
+    display: none;
+}
+
+.woocommerce-message {
+    border-top-color: var(--theme-color-link);
+}
+
+.woocommerce-message::before {
+    color: var(--theme-color-link);
+}
+
+/* Default 3:2 product images — all product listings */
+.woocommerce ul.products li.product .post_featured,
+.woocommerce.related ul.products li.product .post_featured {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+}
+
+.woocommerce ul.products li.product .post_featured img,
+.woocommerce.related ul.products li.product .post_featured img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #000;
+}
+
+/* Uniform 16:9 product images — only on Vehicles category archives */
+.nk-vehicles-archive .woocommerce ul.products li.product .post_featured,
+.nk-vehicles-archive.woocommerce ul.products li.product .post_featured {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+}
+
+.nk-vehicles-archive .woocommerce ul.products li.product .post_featured img,
+.nk-vehicles-archive.woocommerce ul.products li.product .post_featured img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #000;
+}
+
+/* Uniform 3:2 product images — only on Vouchers category archives */
+.nk-vouchers-archive .woocommerce ul.products li.product .post_featured,
+.nk-vouchers-archive.woocommerce ul.products li.product .post_featured {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+}
+
+.nk-vouchers-archive .woocommerce ul.products li.product .post_featured img,
+.nk-vouchers-archive.woocommerce ul.products li.product .post_featured img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: #000;
+}
+
+.wc-block-components-radio-control .wc-block-components-radio-control__input {
+    border-color: var(--theme-color-title);
+}
+
+/* Compact PayPal payment option */
+#radio-control-wc-payment-method-options-ppcp-gateway__content {
+    padding: 4px 0 0;
+}
+
+#radio-control-wc-payment-method-options-ppcp-gateway__content p:first-child {
+    display: none; /* hide "Pay via PayPal." */
+}
+
+#radio-control-wc-payment-method-options-ppcp-gateway__content .ppcp-place-order-description {
+    display: none;
+}
+
+/* Hide billing address on order confirmation page */
+.woocommerce-order-received .woocommerce-customer-details {
+    display: none !important;
+}
+
+/* Hide product meta (Categories, Product ID) on single product pages */
+.single-product .product_meta {
+    display: none !important;
+}
+
+/* Vehicle spawncode on single product page */
+.nk-vehicle-spawncode {
+    margin-top: 1.5em;
+}
+
+.nk-vehicle-spawncode .nk-spawncode-label {
+    margin-bottom: 0.25em;
+}
+
+.nk-vehicle-spawncode .nk-spawncode-value {
+    margin: 0;
+}

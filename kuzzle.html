@@ -1,0 +1,2102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Nine Kings — Kuzzle Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --bg-elev: #0d0d0d;
+    --bg-elev-2: #161616;
+    --line: #1e1e1e;
+    --line-hot: #2a2a2a;
+    --ink: #efefef;           /* theme-color-meta */
+    --ink-dim: #a0a0a0;
+    --ink-faint: #555555;
+    --accent: #FD6D01;        /* Nine Kings orange — theme-color-link */
+    --accent-hover: #B85C0F;  /* theme-color-hover */
+    --accent-glow: rgba(253,109,1,0.15);
+    --good: #4caf50;
+    --warn: #ff9800;
+    --bad: #f44336;
+    --live: #f44336;
+    --dev: #2196f3;
+
+    /* ── BRUSHSTROKE DISPLAY FONT ───────────────────────────────────
+       Big titles use 'Another Danger', a brushstroke display face
+       embedded via @font-face just below this :root block. The font
+       files live in ./fonts/ alongside this HTML. */
+    --font-display: 'Another Danger', 'Oswald', sans-serif;
+
+    /* ── STREET-GRIT BRAND ASSETS ───────────────────────────────────
+       Defined once here, reused everywhere. Crown + rough brushstroke
+       are inline SVG; the skyline is a generated silhouette. */
+    --crown: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 22'%3E%3Cpath d='M2 19 L2.5 7 L8.5 12.5 L13 2.5 L17.5 12.5 L23.5 7 L24 19 Z' fill='%23FD6D01'/%3E%3Ccircle cx='2.5' cy='6' r='2.1' fill='%23FD6D01'/%3E%3Ccircle cx='13' cy='2' r='2.3' fill='%23FD6D01'/%3E%3Ccircle cx='23.5' cy='6' r='2.1' fill='%23FD6D01'/%3E%3C/svg%3E");
+    --brush: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 22' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cfilter id='b' x='-3%25' y='-80%25' width='106%25' height='260%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.013 0.29' numOctaves='2' seed='6' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='13'/%3E%3C/filter%3E%3C/defs%3E%3Crect x='8' y='6' width='1184' height='10' rx='2' fill='%23FD6D01' filter='url(%23b)'/%3E%3C/svg%3E");
+    --skyline: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxNjAwIDI4MCcgcHJlc2VydmVBc3BlY3RSYXRpbz0neE1pZFlNYXggc2xpY2UnPjxyZWN0IHg9Jy0zNCcgeT0nMTQ2JyB3aWR0aD0nMTMzJyBoZWlnaHQ9JzEzNCcgZmlsbD0nIzA2MDYwNicvPjxyZWN0IHg9JzEyNicgeT0nMTA5JyB3aWR0aD0nMTE3JyBoZWlnaHQ9JzE3MScgZmlsbD0nIzA2MDYwNicvPjxyZWN0IHg9JzI4NicgeT0nMTcwJyB3aWR0aD0nNzknIGhlaWdodD0nMTEwJyBmaWxsPScjMDYwNjA2Jy8+PHJlY3QgeD0nNjkzJyB5PScxOTknIHdpZHRoPScxMjcnIGhlaWdodD0nODEnIGZpbGw9JyMwNjA2MDYnLz48cmVjdCB4PSc3OTInIHk9JzEzMycgd2lkdGg9JzEwMCcgaGVpZ2h0PScxNDcnIGZpbGw9JyMwNjA2MDYnLz48cmVjdCB4PSc4NjQnIHk9JzIxOCcgd2lkdGg9JzExNycgaGVpZ2h0PSc2MicgZmlsbD0nIzA2MDYwNicvPjxyZWN0IHg9JzEzMDgnIHk9JzE4OScgd2lkdGg9Jzg0JyBoZWlnaHQ9JzkxJyBmaWxsPScjMDYwNjA2Jy8+PHJlY3QgeD0nMTM3MycgeT0nMTU0JyB3aWR0aD0nNzYnIGhlaWdodD0nMTI2JyBmaWxsPScjMDYwNjA2Jy8+PHJlY3QgeD0nMTQxNScgeT0nMTAxJyB3aWR0aD0nMTM3JyBoZWlnaHQ9JzE3OScgZmlsbD0nIzA2MDYwNicvPjxyZWN0IHg9Jy0yMCcgeT0nMTA3JyB3aWR0aD0nMTA1JyBoZWlnaHQ9JzE3MycgZmlsbD0nIzBlMGIwOScvPjxyZWN0IHg9JzU4JyB5PScxMTknIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC41NycvPjxyZWN0IHg9Jy0xMicgeT0nMTM3JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkZCMzZiJyBmaWxsLW9wYWNpdHk9JzAuNScvPjxyZWN0IHg9JzE2JyB5PScxMzcnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC42MicvPjxyZWN0IHg9JzInIHk9JzE5MScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjY5Jy8+PHJlY3QgeD0nLTEyJyB5PScyMDknIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC4zNycvPjxyZWN0IHg9JzE2JyB5PScyMjcnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRkIzNmInIGZpbGwtb3BhY2l0eT0nMC41Jy8+PHJlY3QgeD0nMzAnIHk9JzIyNycgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjU0Jy8+PHJlY3QgeD0nNTgnIHk9JzIyNycgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjUxJy8+PHJlY3QgeD0nODUnIHk9JzE1NScgd2lkdGg9JzYzJyBoZWlnaHQ9JzEyNScgZmlsbD0nIzEyMTIxMicvPjxyZWN0IHg9JzEwNycgeT0nMTY3JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuMzcnLz48cmVjdCB4PScxMjEnIHk9JzE4NScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjYyJy8+PHJlY3QgeD0nMTA3JyB5PScyMDMnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC40MScvPjxyZWN0IHg9JzE0MCcgeT0nNzQnIHdpZHRoPSc4OScgaGVpZ2h0PScyMDYnIGZpbGw9JyMwODA4MDgnLz48cmVjdCB4PScxODMnIHk9JzUyJyB3aWR0aD0nMicgaGVpZ2h0PScyMicgZmlsbD0nIzFhMWExYScvPjxjaXJjbGUgY3g9JzE4NCcgY3k9JzUyJyByPScyLjQnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC44NScvPjxyZWN0IHg9JzE5MCcgeT0nMTA0JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNDMnLz48cmVjdCB4PScyMDQnIHk9JzEwNCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZGQjM2YicgZmlsbC1vcGFjaXR5PScwLjUnLz48cmVjdCB4PScxNDgnIHk9JzEyMicgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjUyJy8+PHJlY3QgeD0nMTYyJyB5PScxMjInIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC42NicvPjxyZWN0IHg9JzIwNCcgeT0nMTIyJyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNDQnLz48cmVjdCB4PScxNzYnIHk9JzE1OCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjM3Jy8+PHJlY3QgeD0nMTQ4JyB5PScxNzYnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC4zNicvPjxyZWN0IHg9JzE3NicgeT0nMTc2JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuMzYnLz48cmVjdCB4PScxNzYnIHk9JzE5NCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjM4Jy8+PHJlY3QgeD0nMjA0JyB5PScyMTInIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRkIzNmInIGZpbGwtb3BhY2l0eT0nMC41Jy8+PHJlY3QgeD0nMTkwJyB5PScyMzAnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRkIzNmInIGZpbGwtb3BhY2l0eT0nMC41Jy8+PHJlY3QgeD0nMTQ4JyB5PScyNDgnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRkIzNmInIGZpbGwtb3BhY2l0eT0nMC41Jy8+PHJlY3QgeD0nMTYyJyB5PScyNDgnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC4zOCcvPjxyZWN0IHg9JzE5MCcgeT0nMjQ4JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuMzknLz48cmVjdCB4PScyMDQnIHk9JzI0OCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjU3Jy8+PHJlY3QgeD0nMjM1JyB5PScxMTcnIHdpZHRoPSc1NicgaGVpZ2h0PScxNjMnIGZpbGw9JyMwYzBjMGMnLz48cmVjdCB4PScyMzUnIHk9JzExNycgd2lkdGg9JzU2JyBoZWlnaHQ9JzInIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC4zMicvPjxyZWN0IHg9JzI1NycgeT0nMTY1JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuMzknLz48cmVjdCB4PScyNDMnIHk9JzE4Mycgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjQ0Jy8+PHJlY3QgeD0nMjU3JyB5PScyMDEnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC40NScvPjxyZWN0IHg9JzMwMCcgeT0nMTA1JyB3aWR0aD0nNTEnIGhlaWdodD0nMTc1JyBmaWxsPScjMTAxMDEwJy8+PHJlY3QgeD0nMzA4JyB5PScxMTcnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC40NicvPjxyZWN0IHg9JzM0OCcgeT0nOTQnIHdpZHRoPScxMDMnIGhlaWdodD0nMTg2JyBmaWxsPScjMGMwYzBjJy8+PHJlY3QgeD0nMzQ4JyB5PSc5NCcgd2lkdGg9JzEwMycgaGVpZ2h0PScyJyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuMzInLz48cmVjdCB4PSczOTgnIHk9JzcyJyB3aWR0aD0nMicgaGVpZ2h0PScyMicgZmlsbD0nIzFhMWExYScvPjxjaXJjbGUgY3g9JzM5OScgY3k9JzcyJyByPScyLjQnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC44NScvPjxyZWN0IHg9JzQxMicgeT0nMTA2JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNjknLz48cmVjdCB4PSczNTYnIHk9JzE0Micgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjU4Jy8+PHJlY3QgeD0nMzg0JyB5PScxNjAnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC42NycvPjxyZWN0IHg9JzM3MCcgeT0nMTc4JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNDYnLz48cmVjdCB4PSczOTgnIHk9JzI1MCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjQ1Jy8+PHJlY3QgeD0nNDQ4JyB5PScxNDInIHdpZHRoPSc2NycgaGVpZ2h0PScxMzgnIGZpbGw9JyMwYzBjMGMnLz48cmVjdCB4PSc0NDgnIHk9JzE0Micgd2lkdGg9JzY3JyBoZWlnaHQ9JzInIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC4zMicvPjxyZWN0IHg9JzQ1NicgeT0nMTcyJyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNDUnLz48cmVjdCB4PSc0NTYnIHk9JzIyNicgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZGQjM2YicgZmlsbC1vcGFjaXR5PScwLjUnLz48cmVjdCB4PSc0ODQnIHk9JzI0NCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjU0Jy8+PHJlY3QgeD0nNTA4JyB5PScxNjknIHdpZHRoPSc2MCcgaGVpZ2h0PScxMTEnIGZpbGw9JyMwODA4MDgnLz48cmVjdCB4PSc1NDQnIHk9JzE4MScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjYzJy8+PHJlY3QgeD0nNTMwJyB5PScyMzUnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC40NycvPjxyZWN0IHg9JzU3NicgeT0nMTA0JyB3aWR0aD0nNTQnIGhlaWdodD0nMTc2JyBmaWxsPScjMTIxMjEyJy8+PHJlY3QgeD0nNTc2JyB5PScxMDQnIHdpZHRoPSc1NCcgaGVpZ2h0PScyJyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuMzInLz48cmVjdCB4PSc1ODQnIHk9JzE1Micgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjYnLz48cmVjdCB4PSc1ODQnIHk9JzIyNCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjY0Jy8+PHJlY3QgeD0nNjI1JyB5PScxNTAnIHdpZHRoPSc4MycgaGVpZ2h0PScxMzAnIGZpbGw9JyMxMDEwMTAnLz48cmVjdCB4PSc2MjUnIHk9JzE1MCcgd2lkdGg9JzgzJyBoZWlnaHQ9JzInIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC4zMicvPjxyZWN0IHg9JzY2MScgeT0nMjM0JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNjknLz48cmVjdCB4PSc3MDcnIHk9JzE4MCcgd2lkdGg9Jzk5JyBoZWlnaHQ9JzEwMCcgZmlsbD0nIzA4MDgwOCcvPjxyZWN0IHg9Jzc3MScgeT0nMTkyJyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkZCMzZiJyBmaWxsLW9wYWNpdHk9JzAuNScvPjxyZWN0IHg9Jzc3MScgeT0nMjEwJyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNTgnLz48cmVjdCB4PSc3MTUnIHk9JzI0Nicgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZGQjM2YicgZmlsbC1vcGFjaXR5PScwLjUnLz48cmVjdCB4PSc3NDMnIHk9JzI0Nicgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjQyJy8+PHJlY3QgeD0nODA2JyB5PScxMDEnIHdpZHRoPSc3MicgaGVpZ2h0PScxNzknIGZpbGw9JyMxMDEwMTAnLz48cmVjdCB4PSc4MjgnIHk9JzExMycgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjYnLz48cmVjdCB4PSc4MTQnIHk9JzEzMScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjU1Jy8+PHJlY3QgeD0nODI4JyB5PScxNjcnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC42OScvPjxyZWN0IHg9JzgxNCcgeT0nMjAzJyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkZCMzZiJyBmaWxsLW9wYWNpdHk9JzAuNScvPjxyZWN0IHg9Jzg1NicgeT0nMjIxJyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNjgnLz48cmVjdCB4PSc4NzgnIHk9JzE5MScgd2lkdGg9Jzg5JyBoZWlnaHQ9Jzg5JyBmaWxsPScjMTAxMDEwJy8+PHJlY3QgeD0nODc4JyB5PScxOTEnIHdpZHRoPSc4OScgaGVpZ2h0PScyJyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuMzInLz48cmVjdCB4PSc4ODYnIHk9JzIwMycgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjUnLz48cmVjdCB4PSc5MTQnIHk9JzIyMScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjQ1Jy8+PHJlY3QgeD0nOTI4JyB5PScyMjEnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC4zOScvPjxyZWN0IHg9Jzk2NScgeT0nOTcnIHdpZHRoPSc0NicgaGVpZ2h0PScxODMnIGZpbGw9JyMwYzBjMGMnLz48cmVjdCB4PSc5NzMnIHk9JzEwOScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjUzJy8+PHJlY3QgeD0nOTczJyB5PScyMzUnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC41NCcvPjxyZWN0IHg9Jzk4NycgeT0nMjUzJyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNjEnLz48cmVjdCB4PScxMDA0JyB5PSc3Nycgd2lkdGg9Jzk0JyBoZWlnaHQ9JzIwMycgZmlsbD0nIzEwMTAxMCcvPjxyZWN0IHg9JzEwMDQnIHk9Jzc3JyB3aWR0aD0nOTQnIGhlaWdodD0nMicgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjMyJy8+PHJlY3QgeD0nMTA1MCcgeT0nNTUnIHdpZHRoPScyJyBoZWlnaHQ9JzIyJyBmaWxsPScjMWExYTFhJy8+PGNpcmNsZSBjeD0nMTA1MScgY3k9JzU1JyByPScyLjQnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC44NScvPjxyZWN0IHg9JzEwNTQnIHk9JzEwNycgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjQ1Jy8+PHJlY3QgeD0nMTAxMicgeT0nMTI1JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNjknLz48cmVjdCB4PScxMDY4JyB5PScxMjUnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC42NicvPjxyZWN0IHg9JzEwMTInIHk9JzIxNScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjQ5Jy8+PHJlY3QgeD0nMTA2OCcgeT0nMjE1JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNDInLz48cmVjdCB4PScxMDU0JyB5PScyMzMnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC42MicvPjxyZWN0IHg9JzEwNTQnIHk9JzI1MScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjYxJy8+PHJlY3QgeD0nMTA5NCcgeT0nMTQyJyB3aWR0aD0nNDknIGhlaWdodD0nMTM4JyBmaWxsPScjMDgwODA4Jy8+PHJlY3QgeD0nMTA5NCcgeT0nMTQyJyB3aWR0aD0nNDknIGhlaWdodD0nMicgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjMyJy8+PHJlY3QgeD0nMTExNicgeT0nMTU0JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkZCMzZiJyBmaWxsLW9wYWNpdHk9JzAuNScvPjxyZWN0IHg9JzExNDgnIHk9JzUwJyB3aWR0aD0nNjAnIGhlaWdodD0nMjMwJyBmaWxsPScjMTAxMDEwJy8+PHJlY3QgeD0nMTE0OCcgeT0nNTAnIHdpZHRoPSc2MCcgaGVpZ2h0PScyJyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuMzInLz48cmVjdCB4PScxMTc3JyB5PScyOCcgd2lkdGg9JzInIGhlaWdodD0nMjInIGZpbGw9JyMxYTFhMWEnLz48Y2lyY2xlIGN4PScxMTc4JyBjeT0nMjgnIHI9JzIuNCcgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjg1Jy8+PHJlY3QgeD0nMTE1NicgeT0nNjInIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC40NCcvPjxyZWN0IHg9JzExNzAnIHk9Jzk4JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkZCMzZiJyBmaWxsLW9wYWNpdHk9JzAuNScvPjxyZWN0IHg9JzExODQnIHk9Jzk4JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkZCMzZiJyBmaWxsLW9wYWNpdHk9JzAuNScvPjxyZWN0IHg9JzExNTYnIHk9JzE3MCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZGQjM2YicgZmlsbC1vcGFjaXR5PScwLjUnLz48cmVjdCB4PScxMTcwJyB5PScxNzAnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC41NScvPjxyZWN0IHg9JzExNzAnIHk9JzIwNicgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjUxJy8+PHJlY3QgeD0nMTIwMCcgeT0nNTQnIHdpZHRoPSc2MScgaGVpZ2h0PScyMjYnIGZpbGw9JyMwODA4MDgnLz48cmVjdCB4PScxMjAwJyB5PSc1NCcgd2lkdGg9JzYxJyBoZWlnaHQ9JzInIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC4zMicvPjxyZWN0IHg9JzEyMjknIHk9JzMyJyB3aWR0aD0nMicgaGVpZ2h0PScyMicgZmlsbD0nIzFhMWExYScvPjxjaXJjbGUgY3g9JzEyMzAnIGN5PSczMicgcj0nMi40JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuODUnLz48cmVjdCB4PScxMjIyJyB5PSc2Nicgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjU5Jy8+PHJlY3QgeD0nMTIwOCcgeT0nMTIwJyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNCcvPjxyZWN0IHg9JzEyMjInIHk9JzEyMCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZGQjM2YicgZmlsbC1vcGFjaXR5PScwLjUnLz48cmVjdCB4PScxMjM2JyB5PScxMzgnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC42OCcvPjxyZWN0IHg9JzEyMDgnIHk9JzE1Nicgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjU1Jy8+PHJlY3QgeD0nMTIzNicgeT0nMTU2JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkZCMzZiJyBmaWxsLW9wYWNpdHk9JzAuNScvPjxyZWN0IHg9JzEyNTknIHk9JzExOCcgd2lkdGg9JzcxJyBoZWlnaHQ9JzE2MicgZmlsbD0nIzBlMGIwOScvPjxyZWN0IHg9JzEyNTknIHk9JzExOCcgd2lkdGg9JzcxJyBoZWlnaHQ9JzInIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC4zMicvPjxyZWN0IHg9JzEzMDknIHk9JzE0OCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjU0Jy8+PHJlY3QgeD0nMTMwOScgeT0nMTY2JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuMzgnLz48cmVjdCB4PScxMjk1JyB5PScyMDInIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC42NycvPjxyZWN0IHg9JzEyOTUnIHk9JzIyMCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjQ4Jy8+PHJlY3QgeD0nMTMwOScgeT0nMjIwJyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNCcvPjxyZWN0IHg9JzEyODEnIHk9JzIzOCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjQ0Jy8+PHJlY3QgeD0nMTMyMicgeT0nMTY4JyB3aWR0aD0nNTYnIGhlaWdodD0nMTEyJyBmaWxsPScjMDgwODA4Jy8+PHJlY3QgeD0nMTMzMCcgeT0nMTk4JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNDInLz48cmVjdCB4PScxMzg3JyB5PSc3NCcgd2lkdGg9JzQ4JyBoZWlnaHQ9JzIwNicgZmlsbD0nIzBlMGIwOScvPjxyZWN0IHg9JzE0MTAnIHk9JzUyJyB3aWR0aD0nMicgaGVpZ2h0PScyMicgZmlsbD0nIzFhMWExYScvPjxjaXJjbGUgY3g9JzE0MTEnIGN5PSc1Micgcj0nMi40JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuODUnLz48cmVjdCB4PScxNDA5JyB5PSc4Nicgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZGQjM2YicgZmlsbC1vcGFjaXR5PScwLjUnLz48cmVjdCB4PScxNDA5JyB5PScxMjInIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC4zNicvPjxyZWN0IHg9JzEzOTUnIHk9JzE0MCcgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjQ4Jy8+PHJlY3QgeD0nMTQyOScgeT0nNjUnIHdpZHRoPScxMDknIGhlaWdodD0nMjE1JyBmaWxsPScjMGMwYzBjJy8+PHJlY3QgeD0nMTQyOScgeT0nNjUnIHdpZHRoPScxMDknIGhlaWdodD0nMicgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjMyJy8+PHJlY3QgeD0nMTQ4MicgeT0nNDMnIHdpZHRoPScyJyBoZWlnaHQ9JzIyJyBmaWxsPScjMWExYTFhJy8+PGNpcmNsZSBjeD0nMTQ4MycgY3k9JzQzJyByPScyLjQnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC44NScvPjxyZWN0IHg9JzE0MzcnIHk9Jzc3JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNicvPjxyZWN0IHg9JzE0NjUnIHk9Jzc3JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNjgnLz48cmVjdCB4PScxNDM3JyB5PScxMTMnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC4zNycvPjxyZWN0IHg9JzE0NTEnIHk9JzEzMScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZGQjM2YicgZmlsbC1vcGFjaXR5PScwLjUnLz48cmVjdCB4PScxNDY1JyB5PScxMzEnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC40OScvPjxyZWN0IHg9JzE0OTMnIHk9JzEzMScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjUzJy8+PHJlY3QgeD0nMTQzNycgeT0nMTQ5JyB3aWR0aD0nNScgaGVpZ2h0PSc3JyBmaWxsPScjRkQ2RDAxJyBmaWxsLW9wYWNpdHk9JzAuNTInLz48cmVjdCB4PScxNDUxJyB5PScxODUnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC40MicvPjxyZWN0IHg9JzE0NjUnIHk9JzE4NScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZGQjM2YicgZmlsbC1vcGFjaXR5PScwLjUnLz48cmVjdCB4PScxNTA3JyB5PScyMjEnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRkIzNmInIGZpbGwtb3BhY2l0eT0nMC41Jy8+PHJlY3QgeD0nMTUzNicgeT0nMTg1JyB3aWR0aD0nOTknIGhlaWdodD0nOTUnIGZpbGw9JyMxMjEyMTInLz48cmVjdCB4PScxNjAwJyB5PScxOTcnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC4zNycvPjxyZWN0IHg9JzE2MDAnIHk9JzIxNScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZGQjM2YicgZmlsbC1vcGFjaXR5PScwLjUnLz48cmVjdCB4PScxNjAwJyB5PScyMzMnIHdpZHRoPSc1JyBoZWlnaHQ9JzcnIGZpbGw9JyNGRDZEMDEnIGZpbGwtb3BhY2l0eT0nMC40NScvPjxyZWN0IHg9JzE1NTgnIHk9JzI1MScgd2lkdGg9JzUnIGhlaWdodD0nNycgZmlsbD0nI0ZENkQwMScgZmlsbC1vcGFjaXR5PScwLjY4Jy8+PC9zdmc+");
+  }
+
+  /* ── 'Another Danger' brushstroke display font ──────────────────
+     Files live in ./fonts/ alongside this HTML. The upright cut is
+     used for page titles; the slanted cut maps to font-style: italic
+     and drives the login wordmark. */
+  @font-face {
+    font-family: 'Another Danger';
+    src: url('./fonts/AnotherDanger.ttf') format('truetype');
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Another Danger';
+    src: url('./fonts/AnotherDanger-Slanted.ttf') format('truetype');
+    font-weight: 400; font-style: italic; font-display: swap;
+  }
+
+  * { box-sizing: border-box; }
+
+  /* Gritty noise overlay — subtle grain across the whole UI */
+  html::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 9999;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 512px 512px;
+    opacity: 1;
+    mix-blend-mode: overlay;
+  }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Mulish', sans-serif;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Faint city-light gradient bleeds */
+  body {
+    background-image:
+      radial-gradient(ellipse 900px 500px at 5% 5%, rgba(253,109,1,0.06), transparent 70%),
+      radial-gradient(ellipse 600px 600px at 95% 90%, rgba(184,92,15,0.04), transparent 70%);
+    background-attachment: fixed;
+  }
+
+  code, .mono, textarea, select { font-family: 'JetBrains Mono', monospace; }
+  input { font-family: 'Mulish', sans-serif; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); }
+  ::selection { background: var(--accent); color: #000; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 0; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+
+  .app {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    position: relative;
+  }
+
+  /* ── TOP BAR ─────────────────────────────────────────────────── */
+  header.topbar {
+    display: flex; align-items: center; gap: 24px;
+    padding: 14px 28px 16px;
+    background: #000;
+    position: sticky; top: 0; z-index: 10;
+  }
+  header.topbar::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0;
+    height: 12px;
+    background: var(--brush) no-repeat; background-size: 100% 100%;
+    pointer-events: none;
+  }
+  .brand {
+    font-family: var(--font-display);
+    font-weight: 400; font-style: italic;
+    font-size: 28px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .brand b { color: var(--accent); }
+  .brand .sub {
+    font-family: 'Mulish', sans-serif;
+    color: var(--ink-faint); font-size: 12px; margin-left: 12px;
+    letter-spacing: 0; text-transform: none; font-weight: 400;
+  }
+
+  .env-switch { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .env-pill {
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 0; cursor: pointer;
+    border: 1px solid var(--line-hot);
+    background: transparent;
+    color: var(--ink-dim);
+    transition: all 0.15s ease;
+    font-weight: 500;
+  }
+  .env-pill:hover { color: var(--ink); border-color: var(--ink-faint); }
+  .env-pill.active.dev { background: rgba(33,150,243,0.10); border-color: var(--dev); color: var(--dev); }
+  .env-pill.active.live { background: rgba(244,67,54,0.10); border-color: var(--live); color: var(--live); }
+  .env-pill.active.live { animation: livepulse 2.4s ease-in-out infinite; }
+  @keyframes livepulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(244,67,54,0.0); }
+    50%      { box-shadow: 0 0 0 4px rgba(244,67,54,0.12); }
+  }
+
+  .conn-state { font-family: 'Mulish', sans-serif; font-size: 12px; color: var(--ink-faint); }
+  .conn-state .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: middle; background: var(--bad); }
+  .conn-state.up .dot { background: var(--good); box-shadow: 0 0 8px var(--good); }
+
+  .user-bit { font-family: 'Mulish', sans-serif; font-size: 13px; color: var(--ink-dim); }
+  .user-bit button { background: none; border: none; color: var(--accent); cursor: pointer; font: inherit; padding: 0; margin-left: 8px; font-weight: 600; }
+  .user-bit button:hover { color: var(--accent-hover); }
+
+  /* ── LAYOUT ──────────────────────────────────────────────────── */
+  .main { display: grid; grid-template-columns: 230px 1fr; min-height: 0; position: relative; z-index: 1; }
+  /* full-bleed skyline + embers backdrop for the app */
+  .app > .skyline { position: fixed; z-index: 0; }
+  .app > .embers  { position: fixed; z-index: 0; }
+  nav.side {
+    border-right: 1px solid var(--line);
+    padding: 24px 14px;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+  /* faint skyline anchoring the foot of the sidebar */
+  nav.side::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0;
+    height: 120px;
+    background: var(--skyline) repeat-x bottom / auto 120px;
+    opacity: 0.16; pointer-events: none; z-index: 0;
+  }
+  nav.side .group { margin-bottom: 24px; position: relative; z-index: 1; }
+  nav.side .group h4 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 10px 10px; font-weight: 600;
+    display: flex; align-items: center; gap: 7px;
+  }
+  nav.side a {
+    display: block; padding: 8px 14px; border-radius: 0;
+    text-decoration: none; color: var(--ink-dim);
+    font-family: 'Mulish', sans-serif;
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    border-left: 3px solid transparent;
+    margin-bottom: 2px;
+    transition: all 0.12s ease;
+    position: relative; z-index: 1;
+  }
+  nav.side a:hover { color: var(--ink); background: var(--bg-elev-2); }
+  nav.side a.active {
+    color: var(--accent); background: rgba(253,109,1,0.06);
+    border-left-color: var(--accent);
+    font-weight: 700;
+  }
+
+  main.content { padding: 32px 40px; overflow-x: hidden; min-width: 0; }
+
+  /* ── HEADINGS & TEXT ─────────────────────────────────────────── */
+  h1.page {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 46px; letter-spacing: 0.015em;
+    line-height: 1.04;
+    text-transform: uppercase;
+    margin: 2px 0 16px 0;
+    color: var(--ink);
+    position: relative;
+    display: inline-block;
+    padding-bottom: 16px;
+  }
+  h1.page::after {
+    content: ''; position: absolute; left: -20px; right: -20px; bottom: 0;
+    height: 13px;
+    background: var(--brush) no-repeat; background-size: 100% 100%;
+  }
+  h1.page b { color: var(--accent); font-weight: 400; }
+  p.lead { color: var(--ink-dim); margin: 0 0 28px 0; max-width: 70ch; font-size: 14px; line-height: 1.7; }
+
+  /* ── BUTTONS ─────────────────────────────────────────────────── */
+  .btn {
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 10px 20px; border-radius: 0; cursor: pointer;
+    border: 2px solid var(--line-hot); background: transparent; color: var(--ink);
+    transition: all 0.12s ease;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-weight: 500;
+  }
+  .btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn.primary {
+    background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+  .btn.primary:hover:not(:disabled) {
+    background: var(--accent-hover); border-color: var(--accent-hover); color: #000;
+    box-shadow: 0 0 30px rgba(253,109,1,0.3);
+  }
+  .btn.danger { border-color: var(--bad); color: var(--bad); }
+  .btn.danger:hover:not(:disabled) { background: var(--bad); color: #000; border-color: var(--bad); }
+  .btn.ghost { border-color: transparent; background: transparent; }
+  .btn.ghost:hover:not(:disabled) { border-color: var(--line-hot); }
+  .btn.sm { font-size: 11px; padding: 6px 12px; }
+
+  /* ── FORMS ───────────────────────────────────────────────────── */
+  label.field { display: block; margin-bottom: 16px; }
+  label.field > .lbl {
+    display: block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-faint); margin-bottom: 6px;
+    font-weight: 500;
+  }
+  input[type=text], input[type=password], input[type=number], select, textarea {
+    width: 100%; background: var(--bg); color: var(--ink);
+    border: 1px solid var(--line-hot); padding: 11px 14px; border-radius: 0;
+    font-size: 14px;
+  }
+  textarea { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.5; min-height: 200px; resize: vertical; }
+  input:focus, textarea:focus, select:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(253,109,1,0.25);
+  }
+
+  /* ── CARDS / TABLES ──────────────────────────────────────────── */
+  .card {
+    background: rgba(13,13,13,0.19);
+    -webkit-backdrop-filter: blur(4px) saturate(140%);
+            backdrop-filter: blur(4px) saturate(140%);
+    border-radius: 0; padding: 28px 24px 24px; margin-bottom: 22px;
+    position: relative;
+  }
+  /* painted accent stroke along the top edge */
+  .card::before {
+    content: ''; position: absolute; left: 0; right: 0; top: 0;
+    height: 13px;
+    background: var(--brush) no-repeat; background-size: 100% 100%;
+    pointer-events: none;
+  }
+  .card h3 {
+    margin: 0 0 14px 0;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600; font-size: 18px; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--accent);
+    display: flex; align-items: center; gap: 9px;
+  }
+  .card .meta { font-family: 'Mulish', sans-serif; font-size: 12px; color: var(--ink-faint); }
+
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .row.between { justify-content: space-between; }
+  .spacer { flex: 1; }
+
+  table.kt {
+    width: 100%; border-collapse: collapse; font-size: 14px;
+  }
+  table.kt th {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; text-align: left;
+    padding: 12px 14px; border-bottom: 2px solid var(--accent);
+  }
+  table.kt td {
+    padding: 12px 14px; border-bottom: 1px solid var(--line);
+    color: var(--ink); vertical-align: middle;
+  }
+  table.kt tr:hover td { background: rgba(253,109,1,0.04); }
+  table.kt td.actions { text-align: right; }
+  table.kt td .mono { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink-dim); }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 0;
+    background: transparent; color: var(--ink-dim); border: 1px solid var(--line-hot);
+    font-weight: 500;
+  }
+  .badge.good { color: var(--good); border-color: var(--good); background: rgba(76,175,80,0.08); }
+  .badge.warn { color: var(--warn); border-color: var(--warn); background: rgba(255,152,0,0.08); }
+  .badge.bad { color: var(--bad); border-color: var(--bad); background: rgba(244,67,54,0.08); }
+  .badge.accent { color: var(--accent); border-color: var(--accent); background: rgba(253,109,1,0.08); }
+
+  /* ── TOAST ───────────────────────────────────────────────────── */
+  .toasts { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+  .toast {
+    background: var(--bg-elev-2); border: 1px solid var(--line-hot);
+    border-left: 4px solid var(--accent); padding: 14px 20px;
+    border-radius: 0; font-size: 14px; min-width: 280px; max-width: 420px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    animation: slidein 0.2s ease;
+  }
+  @keyframes slidein { from { transform: translateX(10px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .toast.error { border-left-color: var(--bad); }
+  .toast.success { border-left-color: var(--good); }
+  .toast .t-title { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 4px; font-weight: 500; }
+
+  /* ── MODAL ───────────────────────────────────────────────────── */
+  .modal-back {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.80); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center; z-index: 50;
+  }
+  .modal {
+    background: var(--bg-elev); border: 1px solid var(--line-hot);
+    border-radius: 0; padding: 32px 28px 28px; min-width: 480px; max-width: 720px;
+    max-height: 85vh; overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+    position: relative;
+  }
+  .modal::before {
+    content: ''; position: absolute; left: 0; right: 0; top: 0;
+    height: 13px;
+    background: var(--brush) no-repeat; background-size: 100% 100%;
+    pointer-events: none;
+  }
+  .modal h2 {
+    margin: 0 0 8px 0;
+    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 24px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .modal p.lead { margin-bottom: 20px; }
+
+  /* ── LOGIN ───────────────────────────────────────────────────── */
+  .login-shell {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: #000;
+    background-image:
+      radial-gradient(ellipse 1000px 500px at 60% 15%, rgba(253,109,1,0.12), transparent 70%),
+      radial-gradient(ellipse 800px 800px at 10% 85%, rgba(184,92,15,0.06), transparent 70%);
+    position: relative;
+    overflow: hidden;
+  }
+  /* city skyline behind the login panel */
+  .skyline {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 300px;
+    background: var(--skyline) repeat-x bottom / auto 300px;
+    opacity: 0.6; z-index: 0; pointer-events: none;
+    -webkit-mask-image: linear-gradient(to top, #000 28%, transparent 100%);
+            mask-image: linear-gradient(to top, #000 28%, transparent 100%);
+  }
+  /* floating ember / spark particles */
+  .embers { position: absolute; inset: 0; overflow: hidden; z-index: 1; pointer-events: none; }
+  .ember {
+    position: absolute; bottom: -14px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 7px 1px rgba(253,109,1,0.75);
+    opacity: 0;
+    animation: ember-rise linear infinite;
+  }
+  @keyframes ember-rise {
+    0%   { transform: translateY(0) translateX(0); opacity: 0; }
+    8%   { opacity: 0.9; }
+    75%  { opacity: 0.6; }
+    100% { transform: translateY(-105vh) translateX(26px); opacity: 0; }
+  }
+  .login-card {
+    background: rgba(13,13,13,0.19);
+    -webkit-backdrop-filter: blur(4px) saturate(140%);
+            backdrop-filter: blur(4px) saturate(140%);
+    border-radius: 0; padding: 46px 44px; width: 460px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 80px rgba(253,109,1,0.06);
+    position: relative; z-index: 2;
+  }
+  /* painted frame — top and bottom brushstrokes */
+  .login-card::before, .login-card::after {
+    content: ''; position: absolute; left: -55px; right: -55px;
+    height: 15px;
+    background: var(--brush) no-repeat; background-size: 100% 100%;
+    pointer-events: none;
+  }
+  .login-card::before { top: 0; }
+  .login-card::after  { bottom: 0; transform: scaleY(-1); }
+  .login-wordmark {
+    display: block; text-align: center; line-height: 1; margin-bottom: 4px;
+    position: relative;
+  }
+  .login-wordmark .wm-kicker {
+    display: block;
+    font-family: var(--font-display); font-weight: 400; font-style: italic;
+    font-size: 34px; letter-spacing: 0.02em; line-height: 0.86;
+    text-transform: uppercase; color: var(--accent);
+    position: relative; z-index: 2;
+    margin-bottom: -3px;
+    text-shadow: 0 5px 13px rgba(0,0,0,0.92), 0 1px 3px rgba(0,0,0,0.95);
+  }
+  .login-wordmark .wm-main {
+    display: block;
+    font-family: var(--font-display); font-weight: 400; font-style: italic;
+    font-size: 66px; letter-spacing: 0.02em; line-height: 0.86;
+    text-transform: uppercase; color: var(--ink);
+    position: relative; z-index: 1;
+  }
+  .login-card .tag {
+    font-family: 'Oswald', sans-serif; font-size: 11px;
+    color: var(--ink-faint); letter-spacing: 0.16em; text-transform: uppercase;
+    margin: 8px 0 30px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .env-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+  .env-picker .opt {
+    border: 2px solid var(--line-hot); background: transparent;
+    border-radius: 0; padding: 16px; cursor: pointer; text-align: center;
+    font-family: 'Oswald', sans-serif; font-size: 14px; letter-spacing: 0.1em;
+    color: var(--ink-dim); text-transform: uppercase; font-weight: 600;
+    transition: all 0.12s ease;
+  }
+  .env-picker .opt:hover { color: var(--ink); border-color: var(--ink-faint); }
+  .env-picker .opt.sel.dev { border-color: var(--dev); color: var(--dev); background: rgba(33,150,243,0.06); }
+  .env-picker .opt.sel.live { border-color: var(--live); color: var(--live); background: rgba(244,67,54,0.06); }
+  .env-picker .opt small {
+    display: block; font-size: 10px; color: var(--ink-faint); margin-top: 4px; font-weight: 400;
+    font-family: 'Mulish', sans-serif; letter-spacing: 0;
+  }
+
+  /* ── DOC EDITOR ──────────────────────────────────────────────── */
+  .doc-grid { display: grid; grid-template-columns: 320px 1fr; gap: 16px; min-height: 500px; }
+  .doc-list { border: 1px solid var(--line); border-radius: 0; background: rgba(13,13,13,0.19); -webkit-backdrop-filter: blur(4px) saturate(140%); backdrop-filter: blur(4px) saturate(140%); overflow: hidden; }
+  .doc-list .doc-item {
+    padding: 10px 14px; border-bottom: 1px solid var(--line);
+    cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--ink-dim);
+    transition: all 0.08s ease;
+  }
+  .doc-list .doc-item:hover { background: rgba(253,109,1,0.04); color: var(--ink); }
+  .doc-list .doc-item.sel { background: rgba(253,109,1,0.08); color: var(--accent); border-left: 3px solid var(--accent); padding-left: 11px; }
+  .doc-list .doc-item .preview { color: var(--ink-faint); font-size: 10px; margin-top: 3px; }
+  .doc-editor { border: 1px solid var(--line); border-radius: 0; background: rgba(13,13,13,0.19); -webkit-backdrop-filter: blur(4px) saturate(140%); backdrop-filter: blur(4px) saturate(140%); padding: 16px; display: flex; flex-direction: column; }
+  .doc-editor textarea { flex: 1; min-height: 400px; }
+
+  /* permissions tree */
+  .perm-tree { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .perm-tree .controller {
+    border-top: 1px solid var(--line); padding: 8px 0;
+  }
+  .perm-tree .controller > .ctrl-name { color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .perm-tree .action { padding: 2px 0 2px 18px; color: var(--ink-dim); }
+  .perm-tree .action input { vertical-align: middle; margin-right: 8px; accent-color: var(--accent); }
+
+  .empty { color: var(--ink-faint); font-style: italic; padding: 40px; text-align: center; }
+  .danger-confirm {
+    background: rgba(244,67,54,0.06); border: 1px solid rgba(244,67,54,0.3);
+    padding: 14px; border-radius: 0; margin: 12px 0;
+  }
+  .danger-confirm p { margin: 0 0 10px 0; color: var(--ink); font-size: 14px; }
+  .danger-confirm input { background: var(--bg) !important; }
+
+  hr.sep {
+    border: none; height: 9px; margin: 16px 0;
+    background: var(--brush) no-repeat; background-size: 100% 100%;
+  }
+
+  /* ── EXPANDABLE DATA ROWS ─────────────────────────────────────── */
+  .expand-toggle {
+    background: none; border: none; color: var(--accent); cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 4px 8px;
+    transition: color 0.12s;
+  }
+  .expand-toggle:hover { color: var(--accent-hover); }
+  .expand-toggle .arrow { display: inline-block; transition: transform 0.2s; }
+  .expand-toggle .arrow.open { transform: rotate(90deg); }
+
+  tr.expand-row td {
+    padding: 0 !important; border-bottom: 2px solid var(--accent) !important;
+    background: var(--bg-elev) !important;
+  }
+  tr.expand-row td:hover { background: var(--bg-elev) !important; }
+  .expand-inner {
+    padding: 16px 20px;
+    animation: expandIn 0.15s ease;
+  }
+  @keyframes expandIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  .data-preview-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 10px; margin-top: 10px;
+  }
+  .data-preview-card {
+    background: var(--bg); border: 1px solid var(--line);
+    padding: 12px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--ink-dim); overflow: hidden; max-height: 180px;
+    position: relative;
+  }
+  .data-preview-card .doc-id {
+    color: var(--accent); font-weight: 700; font-size: 11px; margin-bottom: 6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .data-preview-card pre {
+    margin: 0; white-space: pre-wrap; word-break: break-all;
+    font-size: 10px; line-height: 1.5; color: var(--ink-faint);
+  }
+  .data-preview-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+    height: 30px; background: linear-gradient(transparent, var(--bg));
+    pointer-events: none;
+  }
+
+  .coll-stat {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    color: var(--ink-dim); padding: 3px 10px;
+    background: var(--bg); border: 1px solid var(--line); margin: 2px 4px 2px 0;
+  }
+  .coll-stat .num { color: var(--accent); font-weight: 700; }
+
+  .mini-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  .mini-table th {
+    font-family: 'Oswald', sans-serif; font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-faint); font-weight: 500;
+    text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line);
+  }
+  .mini-table td {
+    padding: 6px 10px; border-bottom: 1px solid var(--line);
+    color: var(--ink-dim); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  }
+  .mini-table tr:hover td { background: rgba(253,109,1,0.03); }
+
+  .loading-dots::after { content: ''; animation: dots 1.2s steps(3, end) infinite; }
+  @keyframes dots { 0% { content: '.'; } 33% { content: '..'; } 66% { content: '...'; } }
+
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel" data-presets="env,react">
+const { useState, useEffect, useMemo, useRef, useCallback } = React;
+
+// ─── Kuzzle HTTP client (no SDK dependency — keeps the file single-file) ──
+class KuzzleHTTP {
+  constructor({ host, port, ssl }) {
+    this.base = `${ssl ? 'https' : 'http'}://${host}:${port}`;
+    this.token = null;
+  }
+  setToken(t) { this.token = t; }
+  async req(controller, action, body = {}, query = {}) {
+    const params = new URLSearchParams({ controller, action, ...query });
+    const url = `${this.base}/_query`;
+    const headers = { 'Content-Type': 'application/json' };
+    if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
+    const payload = { controller, action, ...body };
+    const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.status >= 400) {
+      const msg = data?.error?.message || `HTTP ${res.status}`;
+      const err = new Error(msg);
+      err.payload = data;
+      throw err;
+    }
+    return data.result;
+  }
+  // convenience wrappers
+  health()                          { return fetch(`${this.base}/_healthcheck`).then(r => r.ok); }
+  login(strategy, creds, expiresIn) { return this.req('auth', 'login', { strategy, body: creds }, expiresIn ? { expiresIn } : {}); }
+  getCurrentUser()                  { return this.req('auth', 'getCurrentUser'); }
+  listIndexes()                     { return this.req('index', 'list'); }
+  createIndex(index)                { return this.req('index', 'create', { index }); }
+  deleteIndex(index)                { return this.req('index', 'delete', { index }); }
+  listCollections(index)            { return this.req('collection', 'list', { index }); }
+  createCollection(index, collection, mappings = {}) {
+    return this.req('collection', 'create', { index, collection, body: { mappings } });
+  }
+  deleteCollection(index, collection) { return this.req('collection', 'delete', { index, collection }); }
+  getMappings(index, collection)    { return this.req('collection', 'getMapping', { index, collection }); }
+  search(index, collection, body, opts = {}) {
+    return this.req('document', 'search', { index, collection, body }, opts);
+  }
+  getDoc(index, collection, _id)    { return this.req('document', 'get', { index, collection, _id }); }
+  createDoc(index, collection, body, _id) {
+    return this.req('document', _id ? 'create' : 'create', { index, collection, body, ...(_id ? { _id } : {}) });
+  }
+  updateDoc(index, collection, _id, body) {
+    return this.req('document', 'update', { index, collection, _id, body });
+  }
+  deleteDoc(index, collection, _id) { return this.req('document', 'delete', { index, collection, _id }); }
+  mWrite(index, collection, documents) {
+    return this.req('document', 'mWrite', { index, collection, body: { documents } });
+  }
+  async scrollAll(index, collection, batchSize = 200) {
+    // Fetches ALL documents via scroll, returns flat array of {_id, _source}
+    const allDocs = [];
+    let scrollId = null;
+    // initial search with scroll
+    const first = await this.req('document', 'search', {
+      index, collection, body: { query: { match_all: {} } }
+    }, { size: batchSize, scroll: '30s' });
+    allDocs.push(...(first.hits || []));
+    scrollId = first.scrollId;
+    while (scrollId && allDocs.length < (first.total || 0)) {
+      const next = await this.req('document', 'scroll', { scrollId });
+      if (!next.hits || next.hits.length === 0) break;
+      allDocs.push(...next.hits);
+      scrollId = next.scrollId;
+    }
+    return allDocs;
+  }
+
+  // security
+  listRoles(body = { from: 0, size: 100 }) { return this.req('security', 'searchRoles', { body }); }
+  createRole(_id, body) { return this.req('security', 'createRole', { _id, body }); }
+  listProfiles(body = { from: 0, size: 100 }) { return this.req('security', 'searchProfiles', { body }); }
+  createProfile(_id, body) { return this.req('security', 'createProfile', { _id, body }); }
+  listUsers(body = { from: 0, size: 100 }) { return this.req('security', 'searchUsers', { body }); }
+  createUser(_id, body) { return this.req('security', 'createUser', { _id, body }); }
+  createApiKey(userId, description, expiresIn = -1) {
+    return this.req('security', 'createApiKey', { userId, body: { description }, expiresIn });
+  }
+}
+
+// ─── persistence (in-memory only; localStorage is NOT supported in artifacts) ──
+const ENV_DEFAULTS = {
+  dev:  { name: 'DEV',  host: 'kuzzle-dev.9krp.com', port: 443, ssl: true, index: 'nkrp_dev' },
+  live: { name: 'LIVE', host: 'kuzzle-main.9krp.com',     port: 443, ssl: true, index: 'nkrp_live' },
+};
+
+// ─── TMC permission template ──────────────────────────────────────
+// Mirrors the requirements documented at https://docs.tmc.bj/v2/guides/kuzzle
+const TMC_SPECIAL_MGET = ['racing_profiles','racing_users','racing_tracks','burner_boards','mdt_crimes'];
+
+function buildTmcPlayerRole(indexName) {
+  // Generic read/write across all collections + special mGet/mDelete grants
+  const collections = {
+    '*': {
+      actions: { get: true, mGet: true, search: true, count: true, exists: true,
+                 create: true, createOrReplace: true, replace: true, update: true,
+                 delete: true, deleteByQuery: true }
+    },
+    notifications: {
+      actions: { get: true, search: true, count: true, exists: true,
+                 create: true, createOrReplace: true, replace: true, update: true,
+                 delete: true, mDelete: true, deleteByQuery: true }
+    }
+  };
+  for (const c of TMC_SPECIAL_MGET) {
+    collections[c] = { actions: { get: true, mGet: true, search: true, count: true,
+                                  exists: true, create: true, createOrReplace: true,
+                                  replace: true, update: true, delete: true } };
+  }
+  return {
+    controllers: {
+      auth:       { actions: { getCurrentUser: true, getMyRights: true, logout: true, checkToken: true } },
+      document:   { actions: { '*': true } }, // scoped further by collection grants below
+      collection: { actions: { list: true, getMapping: true, exists: true } },
+      realtime:   { actions: { '*': true } },
+      server:     { actions: { now: true, info: true } },
+    },
+    // For TMC, the doc says permissions per profile, not per role.
+    // Most operators define a role then attach a profile that restricts by index/collection.
+    _tmcCollections: collections,
+    _tmcIndex: indexName,
+  };
+}
+
+// ─── App ──────────────────────────────────────────────────────────
+function App() {
+  // ── shared state ──
+  const [envs, setEnvs] = useState(ENV_DEFAULTS);
+  const [currentEnv, setCurrentEnv] = useState('dev');
+  const [client, setClient] = useState(null);
+  const [session, setSession] = useState(null); // { user, token }
+  const [connState, setConnState] = useState('down'); // down | up
+  const [toasts, setToasts] = useState([]);
+  const [page, setPage] = useState('indexes');
+  const [modal, setModal] = useState(null);
+
+  const toast = useCallback((kind, title, msg) => {
+    const id = Math.random().toString(36).slice(2);
+    setToasts(t => [...t, { id, kind, title, msg }]);
+    setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 5000);
+  }, []);
+
+  // build client whenever env changes
+  useEffect(() => {
+    const cfg = envs[currentEnv];
+    const c = new KuzzleHTTP(cfg);
+    setClient(c);
+    setSession(null);
+    setConnState('down');
+    c.health().then(ok => setConnState(ok ? 'up' : 'down')).catch(() => setConnState('down'));
+  }, [currentEnv, envs]);
+
+  const doLogin = async ({ username, password, env, customCfg }) => {
+    setCurrentEnv(env);
+    if (customCfg) setEnvs(e => ({ ...e, [env]: { ...e[env], ...customCfg } }));
+    const cfg = { ...envs[env], ...(customCfg || {}) };
+    const c = new KuzzleHTTP(cfg);
+    try {
+      const ok = await c.health();
+      if (!ok) throw new Error('Kuzzle is not reachable at ' + cfg.host + ':' + cfg.port);
+      const res = await c.login('local', { username, password }, '8h');
+      c.setToken(res.jwt);
+      const me = await c.getCurrentUser();
+      setClient(c);
+      setConnState('up');
+      setSession({ user: me, token: res.jwt });
+      toast('success', 'Signed in', `Welcome, ${me._id}. Env: ${cfg.name}.`);
+    } catch (e) {
+      toast('error', 'Login failed', e.message);
+    }
+  };
+  const logout = () => { setSession(null); toast('success', 'Signed out', ''); };
+
+  if (!session) {
+    return <LoginScreen envs={envs} setEnvs={setEnvs} onLogin={doLogin} />;
+  }
+
+  return (
+    <div className="app">
+      <div className="skyline" aria-hidden="true"/>
+      <Embers/>
+      <header className="topbar">
+        <div className="brand">NINE <b>KINGS</b> <span className="sub">{envs[currentEnv].host}</span></div>
+        <div className="env-switch">
+          <span className="conn-state" style={{ marginRight: 14 }}><span className={'dot ' + (connState === 'up' ? '' : '')}/></span>
+          {(() => {
+            const cs = (connState === 'up') ? 'conn-state up' : 'conn-state';
+            return <span className={cs}><span className="dot"/>{connState === 'up' ? 'connected' : 'offline'}</span>;
+          })()}
+          <span className={'env-pill dev ' + (currentEnv === 'dev'  ? 'active' : '')} onClick={() => setCurrentEnv('dev')}>dev</span>
+          <span className={'env-pill live '+ (currentEnv === 'live' ? 'active' : '')} onClick={() => setCurrentEnv('live')}>live</span>
+        </div>
+        <div className="user-bit">
+          {session.user._id}
+          <button onClick={logout}>sign out</button>
+        </div>
+      </header>
+      <div className="main">
+        <Sidebar page={page} setPage={setPage}/>
+        <main className="content">
+          {page === 'indexes'     && <IndexesPage client={client} envName={envs[currentEnv].name} env={currentEnv} toast={toast} setModal={setModal} envIndex={envs[currentEnv].index}/>}
+          {page === 'collections' && <CollectionsPage client={client} envIndex={envs[currentEnv].index} envName={envs[currentEnv].name} env={currentEnv} toast={toast} setModal={setModal}/>}
+          {page === 'documents'   && <DocumentsPage client={client} envIndex={envs[currentEnv].index} envName={envs[currentEnv].name} env={currentEnv} toast={toast}/>}
+          {page === 'importexport' && <ImportExportPage client={client} envIndex={envs[currentEnv].index} envName={envs[currentEnv].name} env={currentEnv} toast={toast} setModal={setModal}/>}
+          {page === 'tmc'         && <TmcShortcutsPage client={client} envIndex={envs[currentEnv].index} envName={envs[currentEnv].name} env={currentEnv} toast={toast} setModal={setModal}/>}
+          {page === 'security'    && <SecurityPage client={client} envIndex={envs[currentEnv].index} envName={envs[currentEnv].name} env={currentEnv} toast={toast} setModal={setModal}/>}
+          {page === 'apikeys'     && <ApiKeysPage client={client} envName={envs[currentEnv].name} env={currentEnv} toast={toast}/>}
+          {page === 'settings'    && <SettingsPage envs={envs} setEnvs={setEnvs} toast={toast}/>}
+        </main>
+      </div>
+      <Toasts toasts={toasts}/>
+      {modal && <Modal>{modal(setModal)}</Modal>}
+    </div>
+  );
+}
+
+function Sidebar({ page, setPage }) {
+  const items = [
+    { group: 'data', items: [
+      { id: 'indexes', label: 'Indexes' },
+      { id: 'collections', label: 'Collections' },
+      { id: 'documents', label: 'Documents' },
+      { id: 'importexport', label: 'Import / Export' },
+    ]},
+    { group: 'tmc', items: [
+      { id: 'tmc', label: 'TMC shortcuts' },
+    ]},
+    { group: 'security', items: [
+      { id: 'security', label: 'Profiles & roles' },
+      { id: 'apikeys', label: 'API keys' },
+    ]},
+    { group: 'config', items: [
+      { id: 'settings', label: 'Settings' },
+    ]},
+  ];
+  return (
+    <nav className="side">
+      {items.map(g => (
+        <div className="group" key={g.group}>
+          <h4>{g.group}</h4>
+          {g.items.map(it => (
+            <a key={it.id} className={page === it.id ? 'active' : ''} onClick={() => setPage(it.id)}>{it.label}</a>
+          ))}
+        </div>
+      ))}
+    </nav>
+  );
+}
+
+function Toasts({ toasts }) {
+  return (
+    <div className="toasts">
+      {toasts.map(t => (
+        <div key={t.id} className={'toast ' + (t.kind || '')}>
+          <div className="t-title">{t.title}</div>
+          {t.msg && <div>{t.msg}</div>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Modal({ children }) {
+  return <div className="modal-back"><div className="modal">{children}</div></div>;
+}
+
+// ─── EMBERS (drifting spark particles for the login backdrop) ─────
+function Embers() {
+  const sparks = useMemo(() => Array.from({ length: 18 }, () => ({
+    left: Math.random() * 100,
+    size: 2 + Math.random() * 3,
+    dur:  7 + Math.random() * 11,
+    delay: Math.random() * 16,
+  })), []);
+  return (
+    <div className="embers" aria-hidden="true">
+      {sparks.map((s, i) => (
+        <span key={i} className="ember" style={{
+          left: s.left + '%',
+          width: s.size + 'px', height: s.size + 'px',
+          animationDuration: s.dur + 's',
+          animationDelay: '-' + s.delay + 's',
+        }}/>
+      ))}
+    </div>
+  );
+}
+
+// ─── LOGIN SCREEN ─────────────────────────────────────────────────
+function LoginScreen({ envs, setEnvs, onLogin }) {
+  const [env, setEnv] = useState('dev');
+  const [u, setU] = useState('admin');
+  const [p, setP] = useState('');
+  const [showHost, setShowHost] = useState(false);
+  const [host, setHost] = useState(envs[env].host);
+  const [port, setPort] = useState(envs[env].port);
+  const [ssl,  setSsl]  = useState(envs[env].ssl);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    setHost(envs[env].host); setPort(envs[env].port); setSsl(envs[env].ssl);
+  }, [env]);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    await onLogin({ username: u, password: p, env, customCfg: showHost ? { host, port: Number(port), ssl } : null });
+    setBusy(false);
+  };
+
+  return (
+    <div className="login-shell">
+      <div className="skyline" aria-hidden="true"/>
+      <Embers/>
+      <form className="login-card" onSubmit={submit}>
+        <div className="login-wordmark">
+          <span className="wm-kicker">Nine</span>
+          <span className="wm-main">Kings</span>
+        </div>
+        <div className="tag">kuzzle management console</div>
+        <div className="env-picker">
+          <div className={'opt dev ' + (env === 'dev'  ? 'sel' : '')} onClick={() => setEnv('dev')}>
+            DEV<small>{envs.dev.host}</small>
+          </div>
+          <div className={'opt live ' + (env === 'live' ? 'sel' : '')} onClick={() => setEnv('live')}>
+            LIVE<small>{envs.live.host}</small>
+          </div>
+        </div>
+        <label className="field">
+          <span className="lbl">username</span>
+          <input type="text" autoFocus value={u} onChange={e => setU(e.target.value)} required/>
+        </label>
+        <label className="field">
+          <span className="lbl">password</span>
+          <input type="password" value={p} onChange={e => setP(e.target.value)} required/>
+        </label>
+        <div className="row">
+          <a className="btn ghost sm" onClick={(e) => { e.preventDefault(); setShowHost(s => !s); }}>
+            {showHost ? '− hide host override' : '+ override host'}
+          </a>
+        </div>
+        {showHost && (
+          <>
+            <label className="field">
+              <span className="lbl">host</span>
+              <input className="mono" value={host} onChange={e => setHost(e.target.value)}/>
+            </label>
+            <div className="row">
+              <label className="field" style={{ flex: 1 }}>
+                <span className="lbl">port</span>
+                <input type="number" className="mono" value={port} onChange={e => setPort(e.target.value)}/>
+              </label>
+              <label className="field" style={{ flex: 1 }}>
+                <span className="lbl">ssl</span>
+                <select className="mono" value={ssl ? '1' : '0'} onChange={e => setSsl(e.target.value === '1')}>
+                  <option value="1">true</option><option value="0">false</option>
+                </select>
+              </label>
+            </div>
+          </>
+        )}
+        <div style={{ marginTop: 20 }}>
+          <button className="btn primary" type="submit" disabled={busy} style={{ width: '100%', justifyContent: 'center' }}>
+            {busy ? 'connecting…' : 'sign in →'}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+// ─── INDEXES ──────────────────────────────────────────────────────
+function IndexesPage({ client, envName, env, envIndex, toast, setModal }) {
+  const [indexes, setIndexes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState({});    // { indexName: { loading, collections: [{name,count}] } }
+
+  const load = async () => {
+    setLoading(true);
+    try { const r = await client.listIndexes(); setIndexes(r.indexes || []); setExpanded({}); }
+    catch (e) { toast('error', 'Load failed', e.message); }
+    finally { setLoading(false); }
+  };
+  useEffect(() => { load(); }, [client]);
+
+  const toggleExpand = async (indexName) => {
+    if (expanded[indexName]) {
+      setExpanded(e => { const n = { ...e }; delete n[indexName]; return n; });
+      return;
+    }
+    setExpanded(e => ({ ...e, [indexName]: { loading: true, collections: [] } }));
+    try {
+      const r = await client.listCollections(indexName);
+      const colls = r.collections || [];
+      // fetch doc counts in parallel
+      const withCounts = await Promise.all(colls.map(async (c) => {
+        try {
+          const sr = await client.search(indexName, c.name, { query: { match_all: {} } }, { size: 0 });
+          return { name: c.name, count: sr.total ?? '?' };
+        } catch { return { name: c.name, count: '?' }; }
+      }));
+      setExpanded(e => ({ ...e, [indexName]: { loading: false, collections: withCounts } }));
+    } catch (err) {
+      toast('error', 'Expand failed', err.message);
+      setExpanded(e => { const n = { ...e }; delete n[indexName]; return n; });
+    }
+  };
+
+  const create = () => setModal(() => (close) => (
+    <CreateIndexModal client={client} close={close} onDone={() => { close(null); load(); toast('success', 'Index created', ''); }}/>
+  ));
+
+  const remove = (name) => setModal(() => (close) => (
+    <ConfirmDangerModal
+      title={`Delete index ${name}?`}
+      message={`This permanently destroys ALL collections and documents in ${name}.`}
+      env={env} envName={envName}
+      confirmText={name}
+      action="delete this index"
+      onConfirm={async () => {
+        try { await client.deleteIndex(name); toast('success', 'Index deleted', name); load(); close(null); }
+        catch (e) { toast('error', 'Delete failed', e.message); }
+      }}
+      close={close}/>
+  ));
+
+  return (
+    <>
+      <h1 className="page">Indexes</h1>
+      <p className="lead">An index is a top-level data namespace. TMC normally uses one per environment ({envIndex}). Click an index row to explore its collections and document counts.</p>
+      <div className="card">
+        <div className="row between">
+          <div className="row">
+            <button className="btn primary" onClick={create}>+ new index</button>
+            <button className="btn ghost" onClick={load}>↻ refresh</button>
+          </div>
+          <span className="meta">{indexes.length} total</span>
+        </div>
+        <hr className="sep"/>
+        {loading ? <div className="empty">loading…</div> :
+         indexes.length === 0 ? <div className="empty">No indexes yet.</div> :
+         <table className="kt">
+           <thead><tr><th></th><th>Name</th><th>Type</th><th className="actions"></th></tr></thead>
+           <tbody>
+             {indexes.map(i => {
+               const ex = expanded[i];
+               return (
+                 <React.Fragment key={i}>
+                   <tr>
+                     <td style={{ width: 32, padding: '12px 6px' }}>
+                       <button className="expand-toggle" onClick={() => toggleExpand(i)}>
+                         <span className={'arrow' + (ex ? ' open' : '')}>▶</span>
+                       </button>
+                     </td>
+                     <td><span className="mono">{i}</span></td>
+                     <td>{i === envIndex ? <span className="badge accent">tmc index</span> : <span className="badge">user</span>}</td>
+                     <td className="actions"><button className="btn sm danger" onClick={() => remove(i)}>delete</button></td>
+                   </tr>
+                   {ex && (
+                     <tr className="expand-row">
+                       <td colSpan={4}>
+                         <div className="expand-inner">
+                           {ex.loading ? (
+                             <span className="meta">Loading collections<span className="loading-dots"></span></span>
+                           ) : ex.collections.length === 0 ? (
+                             <span className="meta" style={{ fontStyle: 'italic' }}>No collections in this index.</span>
+                           ) : (
+                             <>
+                               <span className="meta" style={{ marginBottom: 8, display: 'block' }}>{ex.collections.length} collection{ex.collections.length !== 1 ? 's' : ''}</span>
+                               <table className="mini-table">
+                                 <thead><tr><th>Collection</th><th>Documents</th></tr></thead>
+                                 <tbody>
+                                   {ex.collections.map(c => (
+                                     <tr key={c.name}>
+                                       <td>{c.name}</td>
+                                       <td><span className="num" style={{ color: 'var(--accent)', fontWeight: 700 }}>{typeof c.count === 'number' ? c.count.toLocaleString() : c.count}</span></td>
+                                     </tr>
+                                   ))}
+                                 </tbody>
+                               </table>
+                             </>
+                           )}
+                         </div>
+                       </td>
+                     </tr>
+                   )}
+                 </React.Fragment>
+               );
+             })}
+           </tbody>
+         </table>}
+      </div>
+    </>
+  );
+}
+
+function CreateIndexModal({ client, close, onDone }) {
+  const [name, setName] = useState('');
+  const [busy, setBusy] = useState(false);
+  const submit = async (e) => {
+    e.preventDefault(); setBusy(true);
+    try { await client.createIndex(name); onDone(); }
+    catch (er) { alert(er.message); setBusy(false); }
+  };
+  return (
+    <form onSubmit={submit}>
+      <h2>Create index</h2>
+      <p className="lead">Lowercase letters, numbers, dashes and underscores only.</p>
+      <label className="field">
+        <span className="lbl">name</span>
+        <input autoFocus className="mono" value={name} onChange={e => setName(e.target.value.toLowerCase())} required pattern="[a-z0-9_-]+"/>
+      </label>
+      <div className="row between" style={{ marginTop: 20 }}>
+        <button type="button" className="btn ghost" onClick={() => close(null)}>cancel</button>
+        <button className="btn primary" type="submit" disabled={busy || !name}>{busy ? 'creating…' : 'create'}</button>
+      </div>
+    </form>
+  );
+}
+
+function ConfirmDangerModal({ title, message, env, envName, confirmText, action, onConfirm, close }) {
+  const [txt, setTxt] = useState('');
+  const [busy, setBusy] = useState(false);
+  return (
+    <div>
+      <h2 style={{ color: 'var(--bad)' }}>{title}</h2>
+      <p className="lead">{message}</p>
+      {env === 'live' && (
+        <div style={{
+          background: 'rgba(255,59,59,0.1)', border: '1px solid var(--live)',
+          padding: '14px', borderRadius: 4, marginBottom: 14
+        }}>
+          <strong style={{ color: 'var(--live)' }}>⚠ This is the LIVE environment.</strong>
+          <p style={{ margin: '6px 0 0 0', fontSize: 14 }}>Production player data will be permanently affected.</p>
+        </div>
+      )}
+      <div className="danger-confirm">
+        <p>Type <code style={{ color: 'var(--accent)' }}>{confirmText}</code> to confirm you want to {action}:</p>
+        <input className="mono" value={txt} onChange={e => setTxt(e.target.value)} autoFocus/>
+      </div>
+      <div className="row between" style={{ marginTop: 20 }}>
+        <button className="btn ghost" onClick={() => close(null)}>cancel</button>
+        <button className="btn danger" disabled={txt !== confirmText || busy} onClick={async () => { setBusy(true); await onConfirm(); }}>
+          {busy ? 'working…' : 'confirm'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── COLLECTIONS ──────────────────────────────────────────────────
+function CollectionsPage({ client, envIndex, envName, env, toast, setModal }) {
+  const [index, setIndex] = useState(envIndex);
+  const [indexes, setIndexes] = useState([]);
+  const [collections, setCollections] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState({});    // { collName: { loading, count, docs: [] } }
+
+  useEffect(() => {
+    client.listIndexes().then(r => setIndexes(r.indexes || [])).catch(() => {});
+  }, [client]);
+
+  useEffect(() => { setIndex(envIndex); }, [envIndex]);
+
+  const load = useCallback(async () => {
+    if (!index) return;
+    setLoading(true);
+    setExpanded({});
+    try { const r = await client.listCollections(index); setCollections(r.collections || []); }
+    catch (e) { toast('error', 'Load failed', e.message); setCollections([]); }
+    finally { setLoading(false); }
+  }, [client, index]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const toggleExpand = async (collName) => {
+    if (expanded[collName]) {
+      setExpanded(e => { const n = { ...e }; delete n[collName]; return n; });
+      return;
+    }
+    setExpanded(e => ({ ...e, [collName]: { loading: true, count: null, docs: [] } }));
+    try {
+      const r = await client.search(index, collName, { query: { match_all: {} } }, { size: 5 });
+      setExpanded(e => ({ ...e, [collName]: { loading: false, count: r.total ?? 0, docs: r.hits || [] } }));
+    } catch (err) {
+      toast('error', 'Preview failed', err.message);
+      setExpanded(e => { const n = { ...e }; delete n[collName]; return n; });
+    }
+  };
+
+  const createColl = () => setModal(() => (close) => (
+    <CreateCollectionModal client={client} index={index} close={close}
+      onDone={(n) => { close(null); load(); toast('success', 'Collection created', n); }}/>
+  ));
+
+  const dropColl = (name) => setModal(() => (close) => (
+    <ConfirmDangerModal title={`Drop collection ${name}?`}
+      message={`This deletes the collection ${name} and ALL its documents in index ${index}.`}
+      env={env} envName={envName}
+      confirmText={name} action="drop this collection"
+      onConfirm={async () => {
+        try { await client.deleteCollection(index, name); toast('success', 'Dropped', name); load(); close(null); }
+        catch (e) { toast('error', 'Drop failed', e.message); }
+      }}
+      close={close}/>
+  ));
+
+  const viewMappings = async (name) => {
+    try {
+      const m = await client.getMappings(index, name);
+      setModal(() => (close) => (
+        <div>
+          <h2>Mappings: <code style={{ color: 'var(--accent)' }}>{name}</code></h2>
+          <p className="lead">Schema for collection <strong>{name}</strong> in <strong>{index}</strong>.</p>
+          <textarea readOnly style={{ minHeight: 360 }} value={JSON.stringify(m, null, 2)}/>
+          <div className="row" style={{ justifyContent: 'flex-end', marginTop: 14 }}>
+            <button className="btn" onClick={() => close(null)}>close</button>
+          </div>
+        </div>
+      ));
+    } catch (e) { toast('error', 'Failed', e.message); }
+  };
+
+  return (
+    <>
+      <h1 className="page">Collections</h1>
+      <p className="lead">Inside an index, collections are like tables. Click a row to preview its documents. TMC ships a defined set you can bulk-import from the TMC shortcuts page.</p>
+      <div className="card">
+        <div className="row between">
+          <div className="row">
+            <label className="field" style={{ margin: 0 }}>
+              <span className="lbl">index</span>
+              <select className="mono" value={index} onChange={e => setIndex(e.target.value)}>
+                {indexes.map(i => <option key={i} value={i}>{i}</option>)}
+              </select>
+            </label>
+            <button className="btn primary" onClick={createColl} disabled={!index}>+ new collection</button>
+            <button className="btn ghost" onClick={load}>↻ refresh</button>
+          </div>
+          <span className="meta">{collections.length} collections</span>
+        </div>
+        <hr className="sep"/>
+        {loading ? <div className="empty">loading…</div> :
+         collections.length === 0 ? <div className="empty">No collections in {index}.</div> :
+         <table className="kt">
+           <thead><tr><th></th><th>Name</th><th className="actions"></th></tr></thead>
+           <tbody>
+             {collections.map(c => {
+               const ex = expanded[c.name];
+               return (
+                 <React.Fragment key={c.name}>
+                   <tr>
+                     <td style={{ width: 32, padding: '12px 6px' }}>
+                       <button className="expand-toggle" onClick={() => toggleExpand(c.name)}>
+                         <span className={'arrow' + (ex ? ' open' : '')}>▶</span>
+                       </button>
+                     </td>
+                     <td>
+                       <span className="mono">{c.name}</span>
+                       {ex && !ex.loading && <span className="coll-stat" style={{ marginLeft: 10 }}><span className="num">{typeof ex.count === 'number' ? ex.count.toLocaleString() : ex.count}</span> docs</span>}
+                     </td>
+                     <td className="actions">
+                       <button className="btn sm" onClick={() => viewMappings(c.name)}>mappings</button>{' '}
+                       <button className="btn sm danger" onClick={() => dropColl(c.name)}>drop</button>
+                     </td>
+                   </tr>
+                   {ex && (
+                     <tr className="expand-row">
+                       <td colSpan={3}>
+                         <div className="expand-inner">
+                           {ex.loading ? (
+                             <span className="meta">Loading data preview<span className="loading-dots"></span></span>
+                           ) : ex.docs.length === 0 ? (
+                             <span className="meta" style={{ fontStyle: 'italic' }}>Collection is empty — 0 documents.</span>
+                           ) : (
+                             <>
+                               <span className="meta" style={{ display: 'block', marginBottom: 8 }}>
+                                 Showing {ex.docs.length} of {typeof ex.count === 'number' ? ex.count.toLocaleString() : ex.count} documents
+                               </span>
+                               <div className="data-preview-grid">
+                                 {ex.docs.map(d => (
+                                   <div key={d._id} className="data-preview-card">
+                                     <div className="doc-id" title={d._id}>{d._id}</div>
+                                     <pre>{JSON.stringify(d._source, null, 2)}</pre>
+                                   </div>
+                                 ))}
+                               </div>
+                             </>
+                           )}
+                         </div>
+                       </td>
+                     </tr>
+                   )}
+                 </React.Fragment>
+               );
+             })}
+           </tbody>
+         </table>}
+      </div>
+    </>
+  );
+}
+
+function CreateCollectionModal({ client, index, close, onDone }) {
+  const [name, setName] = useState('');
+  const [mappings, setMappings] = useState('{\n  "properties": {\n    "field": { "type": "keyword" }\n  }\n}');
+  const [busy, setBusy] = useState(false);
+  const submit = async (e) => {
+    e.preventDefault(); setBusy(true);
+    try {
+      const m = JSON.parse(mappings);
+      await client.createCollection(index, name, m);
+      onDone(name);
+    } catch (er) { alert(er.message); setBusy(false); }
+  };
+  return (
+    <form onSubmit={submit}>
+      <h2>Create collection</h2>
+      <p className="lead">in index <code style={{ color: 'var(--accent)' }}>{index}</code></p>
+      <label className="field">
+        <span className="lbl">name</span>
+        <input autoFocus className="mono" value={name} onChange={e => setName(e.target.value)} required/>
+      </label>
+      <label className="field">
+        <span className="lbl">mappings (ES JSON)</span>
+        <textarea value={mappings} onChange={e => setMappings(e.target.value)}/>
+      </label>
+      <div className="row between" style={{ marginTop: 14 }}>
+        <button type="button" className="btn ghost" onClick={() => close(null)}>cancel</button>
+        <button className="btn primary" type="submit" disabled={busy || !name}>{busy ? 'creating…' : 'create'}</button>
+      </div>
+    </form>
+  );
+}
+
+// ─── DOCUMENTS ────────────────────────────────────────────────────
+function DocumentsPage({ client, envIndex, envName, env, toast }) {
+  const [index, setIndex] = useState(envIndex);
+  const [indexes, setIndexes] = useState([]);
+  const [collections, setCollections] = useState([]);
+  const [coll, setColl] = useState('');
+  const [docs, setDocs] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [editor, setEditor] = useState('');
+  const [query, setQuery] = useState('{ "match_all": {} }');
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    client.listIndexes().then(r => setIndexes(r.indexes || [])).catch(() => {});
+  }, [client]);
+  useEffect(() => { setIndex(envIndex); }, [envIndex]);
+  useEffect(() => {
+    if (!index) return;
+    client.listCollections(index).then(r => {
+      setCollections(r.collections || []);
+      if (r.collections?.length && !r.collections.find(c => c.name === coll)) {
+        setColl(r.collections[0].name);
+      }
+    }).catch(() => setCollections([]));
+  }, [index, client]);
+
+  const runSearch = async () => {
+    if (!index || !coll) return;
+    setBusy(true);
+    try {
+      const q = JSON.parse(query);
+      const r = await client.search(index, coll, { query: q }, { size: 50 });
+      setDocs(r.hits || []);
+      setSelected(null);
+      toast('success', 'Search', `${r.total} matches, showing ${r.hits.length}`);
+    } catch (e) {
+      toast('error', 'Search failed', e.message);
+    } finally { setBusy(false); }
+  };
+
+  useEffect(() => { if (coll) runSearch(); /* eslint-disable-line */ }, [coll]);
+
+  const selectDoc = (d) => { setSelected(d); setEditor(JSON.stringify(d._source, null, 2)); };
+
+  const save = async () => {
+    if (!selected) return;
+    try {
+      const body = JSON.parse(editor);
+      await client.updateDoc(index, coll, selected._id, body);
+      toast('success', 'Saved', selected._id);
+      runSearch();
+    } catch (e) { toast('error', 'Save failed', e.message); }
+  };
+  const del = async () => {
+    if (!selected) return;
+    if (!confirm(`Delete document ${selected._id}?`)) return;
+    try {
+      await client.deleteDoc(index, coll, selected._id);
+      toast('success', 'Deleted', selected._id);
+      setSelected(null); runSearch();
+    } catch (e) { toast('error', 'Delete failed', e.message); }
+  };
+
+  return (
+    <>
+      <h1 className="page">Documents</h1>
+      <p className="lead">Search and edit documents inside a collection. Queries use the Elasticsearch Query DSL.</p>
+      <div className="card">
+        <div className="row" style={{ marginBottom: 12 }}>
+          <label className="field" style={{ margin: 0, flex: 1 }}>
+            <span className="lbl">index</span>
+            <select className="mono" value={index} onChange={e => setIndex(e.target.value)}>
+              {indexes.map(i => <option key={i} value={i}>{i}</option>)}
+            </select>
+          </label>
+          <label className="field" style={{ margin: 0, flex: 1 }}>
+            <span className="lbl">collection</span>
+            <select className="mono" value={coll} onChange={e => setColl(e.target.value)}>
+              {collections.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+            </select>
+          </label>
+        </div>
+        <label className="field">
+          <span className="lbl">query (ES DSL — the value of "query")</span>
+          <textarea style={{ minHeight: 90 }} value={query} onChange={e => setQuery(e.target.value)}/>
+        </label>
+        <div className="row">
+          <button className="btn primary" onClick={runSearch} disabled={busy || !coll}>{busy ? 'searching…' : 'search'}</button>
+          <span className="meta">{docs.length} results shown</span>
+        </div>
+      </div>
+      <div className="doc-grid">
+        <div className="doc-list">
+          {docs.length === 0 && <div className="empty">no results</div>}
+          {docs.map(d => (
+            <div key={d._id} className={'doc-item ' + (selected?._id === d._id ? 'sel' : '')} onClick={() => selectDoc(d)}>
+              {d._id}
+              <div className="preview">{Object.keys(d._source).slice(0,3).join(', ')}</div>
+            </div>
+          ))}
+        </div>
+        <div className="doc-editor">
+          {!selected ? <div className="empty">Select a document on the left to view/edit.</div> : (
+            <>
+              <div className="row between" style={{ marginBottom: 10 }}>
+                <span className="mono" style={{ color: 'var(--accent)' }}>{selected._id}</span>
+                <div className="row">
+                  <button className="btn sm primary" onClick={save}>save</button>
+                  <button className="btn sm danger" onClick={del}>delete</button>
+                </div>
+              </div>
+              <textarea value={editor} onChange={e => setEditor(e.target.value)}/>
+            </>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─── IMPORT / EXPORT ──────────────────────────────────────────────
+function ImportExportPage({ client, envIndex, envName, env, toast, setModal }) {
+  const [indexes, setIndexes] = useState([]);
+  const [exportIndex, setExportIndex] = useState(envIndex);
+  const [importIndex, setImportIndex] = useState(envIndex);
+  const [exporting, setExporting] = useState(false);
+  const [exportLog, setExportLog] = useState([]);
+  const [importing, setImporting] = useState(false);
+  const [importLog, setImportLog] = useState([]);
+  const [importFile, setImportFile] = useState(null);
+  const [importPreview, setImportPreview] = useState(null);
+  const [createIdx, setCreateIdx] = useState(true);
+  const fileRef = useRef();
+
+  useEffect(() => {
+    client.listIndexes().then(r => { setIndexes(r.indexes || []); }).catch(() => {});
+  }, [client]);
+  useEffect(() => { setExportIndex(envIndex); setImportIndex(envIndex); }, [envIndex]);
+
+  // ── EXPORT ──
+  const doExport = async () => {
+    if (!exportIndex) return;
+    setExporting(true);
+    setExportLog([]);
+    const log = (msg) => setExportLog(l => [...l, msg]);
+    try {
+      log(`Listing collections in ${exportIndex}…`);
+      const r = await client.listCollections(exportIndex);
+      const colls = r.collections || [];
+      if (colls.length === 0) { log('No collections found — nothing to export.'); setExporting(false); return; }
+      log(`Found ${colls.length} collection(s). Starting export…`);
+
+      const exportData = { _meta: { exportedAt: new Date().toISOString(), index: exportIndex, env: envName }, collections: {} };
+
+      for (const c of colls) {
+        log(`  → ${c.name}: fetching mappings…`);
+        let mappings = {};
+        try { mappings = await client.getMappings(exportIndex, c.name); } catch {}
+
+        log(`  → ${c.name}: fetching documents…`);
+        let docs = [];
+        try { docs = await client.scrollAll(exportIndex, c.name); } catch (e) {
+          log(`  ⚠ ${c.name}: scroll failed (${e.message}), trying single search…`);
+          try {
+            const sr = await client.search(exportIndex, c.name, { query: { match_all: {} } }, { size: 1000 });
+            docs = sr.hits || [];
+          } catch (e2) { log(`  ✗ ${c.name}: search also failed — ${e2.message}`); }
+        }
+
+        exportData.collections[c.name] = {
+          mappings,
+          documents: docs.map(d => ({ _id: d._id, body: d._source }))
+        };
+        log(`  ✓ ${c.name}: ${docs.length} document(s)`);
+      }
+
+      const totalDocs = Object.values(exportData.collections).reduce((s, c) => s + c.documents.length, 0);
+      log(`Export complete: ${colls.length} collections, ${totalDocs.toLocaleString()} total documents.`);
+      log('Downloading file…');
+
+      // trigger download
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `kuzzle-export-${exportIndex}-${new Date().toISOString().slice(0,10)}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      toast('success', 'Export done', `${colls.length} collections, ${totalDocs.toLocaleString()} docs`);
+    } catch (e) {
+      log(`✗ Export failed: ${e.message}`);
+      toast('error', 'Export failed', e.message);
+    } finally { setExporting(false); }
+  };
+
+  // ── IMPORT — file pick ──
+  const onFilePick = async (e) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setImportFile(f);
+    setImportPreview(null);
+    setImportLog([]);
+    try {
+      const text = await f.text();
+      const data = JSON.parse(text);
+      if (!data.collections || typeof data.collections !== 'object') throw new Error('Invalid export file: missing "collections" key.');
+      const summary = Object.entries(data.collections).map(([name, c]) => ({
+        name, docs: c.documents?.length || 0, hasMappings: !!c.mappings && Object.keys(c.mappings).length > 0
+      }));
+      setImportPreview({ data, summary, totalDocs: summary.reduce((s, c) => s + c.docs, 0), meta: data._meta || {} });
+    } catch (err) {
+      toast('error', 'Invalid file', err.message);
+      setImportFile(null);
+    }
+  };
+
+  // ── IMPORT — execute ──
+  const doImport = async () => {
+    if (!importPreview) return;
+    const { data } = importPreview;
+    setImporting(true);
+    setImportLog([]);
+    const log = (msg) => setImportLog(l => [...l, msg]);
+
+    try {
+      // optionally create the target index
+      if (createIdx) {
+        log(`Creating index ${importIndex} (if it doesn't exist)…`);
+        try { await client.createIndex(importIndex); log(`  ✓ Index created.`); }
+        catch (e) {
+          if (e.message?.includes('already exists') || e.payload?.status === 412) log(`  ○ Index already exists — skipping.`);
+          else throw e;
+        }
+      }
+
+      const entries = Object.entries(data.collections);
+      let totalImported = 0;
+
+      for (const [collName, collData] of entries) {
+        // create collection with mappings
+        log(`  → ${collName}: creating collection…`);
+        try {
+          const mappings = collData.mappings || {};
+          await client.createCollection(importIndex, collName, mappings);
+          log(`  ✓ ${collName}: collection ready`);
+        } catch (e) {
+          if (e.message?.includes('already exists') || e.payload?.status === 412) {
+            log(`  ○ ${collName}: already exists — continuing with documents`);
+          } else {
+            log(`  ⚠ ${collName}: create failed (${e.message}) — trying documents anyway`);
+          }
+        }
+
+        // bulk write documents in batches of 200
+        const docs = collData.documents || [];
+        if (docs.length === 0) { log(`  ○ ${collName}: no documents to import`); continue; }
+
+        const BATCH = 200;
+        let imported = 0;
+        for (let i = 0; i < docs.length; i += BATCH) {
+          const batch = docs.slice(i, i + BATCH);
+          const mWriteDocs = batch.map(d => ({ _id: d._id, body: d.body }));
+          try {
+            await client.mWrite(importIndex, collName, mWriteDocs);
+            imported += batch.length;
+          } catch (e) {
+            log(`  ⚠ ${collName}: batch ${Math.floor(i/BATCH)+1} failed — ${e.message}`);
+            // fallback: try one-by-one for this batch
+            for (const d of batch) {
+              try {
+                await client.createDoc(importIndex, collName, d.body, d._id);
+                imported++;
+              } catch {}
+            }
+          }
+        }
+        totalImported += imported;
+        log(`  ✓ ${collName}: ${imported}/${docs.length} documents written`);
+      }
+
+      log(`Import complete: ${entries.length} collections, ${totalImported.toLocaleString()} documents written to ${importIndex}.`);
+      toast('success', 'Import done', `${totalImported.toLocaleString()} docs into ${importIndex}`);
+    } catch (e) {
+      log(`✗ Import failed: ${e.message}`);
+      toast('error', 'Import failed', e.message);
+    } finally { setImporting(false); }
+  };
+
+  const confirmImport = () => {
+    if (env === 'live') {
+      setModal(() => (close) => (
+        <ConfirmDangerModal
+          title={`Import into LIVE index ${importIndex}?`}
+          message={`This will write ${importPreview.totalDocs.toLocaleString()} documents across ${importPreview.summary.length} collections into the LIVE environment. Existing documents with the same IDs will be overwritten.`}
+          env={env} envName={envName}
+          confirmText={importIndex} action="import into this live index"
+          onConfirm={async () => { close(null); doImport(); }}
+          close={close}/>
+      ));
+    } else {
+      doImport();
+    }
+  };
+
+  return (
+    <>
+      <h1 className="page">Import / Export</h1>
+      <p className="lead">Export an entire index (all collections, mappings, and documents) to a JSON file, or import one back into any index. Useful for migrating between Kuzzle hosts.</p>
+
+      {/* ── EXPORT CARD ── */}
+      <div className="card">
+        <h3>Export index</h3>
+        <p style={{ color: 'var(--ink-dim)', fontSize: 14 }}>
+          Downloads every collection's mappings and all documents as a single JSON file.
+          Large indexes may take a minute — the log below shows progress.
+        </p>
+        <div className="row" style={{ marginBottom: 12 }}>
+          <label className="field" style={{ margin: 0 }}>
+            <span className="lbl">index to export</span>
+            <select className="mono" value={exportIndex} onChange={e => setExportIndex(e.target.value)}>
+              {indexes.map(i => <option key={i} value={i}>{i}</option>)}
+            </select>
+          </label>
+          <button className="btn primary" onClick={doExport} disabled={exporting || !exportIndex}>
+            {exporting ? 'exporting…' : '↓ export index'}
+          </button>
+        </div>
+        {exportLog.length > 0 && (
+          <textarea readOnly className="mono" style={{ minHeight: 140, fontSize: 12, color: 'var(--ink-dim)', background: 'var(--bg)' }}
+            value={exportLog.join('\n')}/>
+        )}
+      </div>
+
+      {/* ── IMPORT CARD ── */}
+      <div className="card">
+        <h3>Import index</h3>
+        <p style={{ color: 'var(--ink-dim)', fontSize: 14 }}>
+          Upload a previously exported JSON file. Collections and their mappings will be created, then documents are bulk-written.
+          Documents with existing IDs will be <strong>overwritten</strong>.
+        </p>
+        <div className="row" style={{ marginBottom: 12 }}>
+          <input ref={fileRef} type="file" accept=".json" onChange={onFilePick} style={{ display: 'none' }}/>
+          <button className="btn" onClick={() => fileRef.current.click()}>browse export file…</button>
+          {importFile && <span className="meta">{importFile.name} ({(importFile.size / 1024).toFixed(0)} KB)</span>}
+        </div>
+
+        {importPreview && (
+          <>
+            {importPreview.meta.exportedAt && (
+              <p style={{ color: 'var(--ink-faint)', fontSize: 12, margin: '0 0 8px 0' }}>
+                Exported from <code style={{ color: 'var(--accent)' }}>{importPreview.meta.index || '?'}</code>
+                {' '}on {importPreview.meta.exportedAt.slice(0, 10)}
+                {importPreview.meta.env ? ` (${importPreview.meta.env})` : ''}
+              </p>
+            )}
+            <table className="mini-table" style={{ marginBottom: 12 }}>
+              <thead><tr><th>Collection</th><th>Documents</th><th>Mappings</th></tr></thead>
+              <tbody>
+                {importPreview.summary.map(c => (
+                  <tr key={c.name}>
+                    <td>{c.name}</td>
+                    <td><span style={{ color: 'var(--accent)', fontWeight: 700 }}>{c.docs.toLocaleString()}</span></td>
+                    <td>{c.hasMappings ? <span className="badge good">yes</span> : <span className="badge">none</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p style={{ color: 'var(--ink-dim)', fontSize: 13, margin: '0 0 12px 0' }}>
+              <strong>{importPreview.summary.length}</strong> collection(s), <strong>{importPreview.totalDocs.toLocaleString()}</strong> total document(s)
+            </p>
+
+            <div className="row" style={{ marginBottom: 12, gap: 16 }}>
+              <label className="field" style={{ margin: 0 }}>
+                <span className="lbl">target index</span>
+                <input className="mono" value={importIndex} onChange={e => setImportIndex(e.target.value)} style={{ width: 260 }}/>
+              </label>
+              <label className="field" style={{ margin: 0 }}>
+                <span className="lbl">create index if missing</span>
+                <select className="mono" value={createIdx ? '1' : '0'} onChange={e => setCreateIdx(e.target.value === '1')}>
+                  <option value="1">yes</option><option value="0">no</option>
+                </select>
+              </label>
+            </div>
+
+            <button className="btn primary" onClick={confirmImport} disabled={importing || !importIndex}>
+              {importing ? 'importing…' : `↑ import into ${importIndex}`}
+            </button>
+          </>
+        )}
+
+        {importLog.length > 0 && (
+          <textarea readOnly className="mono" style={{ minHeight: 160, fontSize: 12, color: 'var(--ink-dim)', background: 'var(--bg)', marginTop: 12 }}
+            value={importLog.join('\n')}/>
+        )}
+      </div>
+    </>
+  );
+}
+
+// ─── TMC SHORTCUTS ────────────────────────────────────────────────
+function TmcShortcutsPage({ client, envIndex, envName, env, toast, setModal }) {
+  const [files, setFiles] = useState([]); // { name, content }
+  const [collisions, setCollisions] = useState({});
+  const fileInput = useRef();
+
+  const onPick = async (e) => {
+    const flist = Array.from(e.target.files || []);
+    const parsed = [];
+    for (const f of flist) {
+      if (!f.name.endsWith('.json')) continue;
+      try {
+        const text = await f.text();
+        const data = JSON.parse(text);
+        parsed.push({ name: f.name.replace(/\.json$/i, ''), content: data });
+      } catch (er) {
+        toast('error', f.name, 'Not valid JSON: ' + er.message);
+      }
+    }
+    setFiles(parsed);
+    if (parsed.length) {
+      // check collisions
+      try {
+        const existing = await client.listCollections(envIndex);
+        const set = new Set((existing.collections || []).map(c => c.name));
+        const map = {}; parsed.forEach(p => { map[p.name] = set.has(p.name); });
+        setCollisions(map);
+      } catch {}
+    }
+  };
+
+  const importAll = async () => {
+    if (!files.length) return;
+    let ok = 0, fail = 0;
+    for (const f of files) {
+      try {
+        // Accept either {mappings: {...}} or raw mapping body
+        const mappings = f.content.mappings || f.content;
+        await client.createCollection(envIndex, f.name, mappings);
+        ok++;
+      } catch (e) {
+        fail++;
+        toast('error', f.name, e.message);
+      }
+    }
+    toast('success', 'Import complete', `${ok} ok, ${fail} failed`);
+  };
+
+  const applyTmcPermissions = () => setModal(() => (close) => (
+    <ApplyTmcPermsModal client={client} envIndex={envIndex} env={env} envName={envName}
+      close={close} onDone={() => { close(null); toast('success', 'TMC permissions applied', ''); }}/>
+  ));
+
+  return (
+    <>
+      <h1 className="page">TMC shortcuts</h1>
+      <p className="lead">Workflows specific to The Modding Collective framework — bulk import collection mappings and create the player profile/role that TMC requires.</p>
+
+      <div className="card">
+        <h3>1 · Import collection mappings</h3>
+        <p style={{ color: 'var(--ink-dim)', fontSize: 14 }}>
+          Clone <code>git.tmc.bj/BanHammer/kuzzle-collection-mappings</code> and pick its <code>.json</code> files below.
+          Each file becomes a collection named after the filename (e.g. <code>dispatch_calls.json</code> → <code>dispatch_calls</code>).
+        </p>
+        <div className="row">
+          <input ref={fileInput} type="file" multiple accept=".json" onChange={onPick} style={{ display: 'none' }}/>
+          <button className="btn" onClick={() => fileInput.current.click()}>browse json files…</button>
+          <span className="meta">target index: {envIndex}</span>
+        </div>
+        {files.length > 0 && (
+          <>
+            <hr className="sep"/>
+            <table className="kt">
+              <thead><tr><th>Collection</th><th>Status</th></tr></thead>
+              <tbody>
+                {files.map(f => (
+                  <tr key={f.name}>
+                    <td><span className="mono">{f.name}</span></td>
+                    <td>{collisions[f.name] ? <span className="badge warn">already exists — will fail</span> : <span className="badge good">ready</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="row" style={{ marginTop: 12 }}>
+              <button className="btn primary" onClick={importAll}>import {files.length} collections into {envIndex}</button>
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="card">
+        <h3>2 · TMC permission template</h3>
+        <p style={{ color: 'var(--ink-dim)', fontSize: 14 }}>
+          One-click creates the role + profile shape TMC expects (read/write on all collections,
+          <code>mDelete</code> on <code>notifications</code>, <code>mGet</code> on racing/MDT/burner board collections).
+        </p>
+        <button className="btn primary" onClick={applyTmcPermissions}>apply TMC permission template…</button>
+      </div>
+
+      <div className="card">
+        <h3>3 · Useful commands (kourou)</h3>
+        <p style={{ color: 'var(--ink-dim)', fontSize: 13 }}>For when you'd rather use the CLI:</p>
+        <textarea readOnly style={{ minHeight: 140 }} className="mono" value={
+`# Create the index
+kourou index:create ${envIndex} -h <host> --ssl -p 443 \\
+  --username admin --password '...'
+
+# Bulk import (run from the kuzzle-collection-mappings folder)
+for f in *.json; do
+  kourou collection:create ${envIndex} "\${f%.json}" --body "@\$f" \\
+    -h <host> --ssl -p 443 --username admin --password '...'
+done
+
+# Create the TMC server API key
+kourou security:createApiKey tmc-server-user "TMC ${envName} key" -1 \\
+  -h <host> --ssl -p 443 --username admin --password '...'`
+        }/>
+      </div>
+    </>
+  );
+}
+
+function ApplyTmcPermsModal({ client, envIndex, env, envName, close, onDone }) {
+  const [roleId, setRoleId] = useState('nkrp_player_role');
+  const [profileId, setProfileId] = useState('nkrp_player');
+  const [busy, setBusy] = useState(false);
+
+  const apply = async () => {
+    setBusy(true);
+    try {
+      // Build a role granting needed controllers
+      const roleBody = {
+        controllers: {
+          auth:       { actions: { getCurrentUser: true, getMyRights: true, logout: true, checkToken: true } },
+          document:   { actions: { get: true, mGet: true, search: true, count: true, exists: true,
+                                   create: true, createOrReplace: true, replace: true, update: true,
+                                   delete: true, mDelete: true, deleteByQuery: true } },
+          collection: { actions: { list: true, getMapping: true, exists: true } },
+          realtime:   { actions: { subscribe: true, unsubscribe: true, publish: true, count: true, list: true, join: true } },
+          server:     { actions: { now: true, info: true } },
+        }
+      };
+      await client.createRole(roleId, roleBody);
+
+      // Build a profile restricting the role to the TMC index
+      const profileBody = {
+        policies: [{
+          roleId,
+          restrictedTo: [{ index: envIndex }]
+        }]
+      };
+      await client.createProfile(profileId, profileBody);
+      onDone();
+    } catch (e) {
+      alert('Failed: ' + e.message);
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Apply TMC permission template</h2>
+      <p className="lead">
+        Creates a role and a profile in the <strong>{envName}</strong> environment, scoped to index <code>{envIndex}</code>.
+      </p>
+      <label className="field">
+        <span className="lbl">role id</span>
+        <input className="mono" value={roleId} onChange={e => setRoleId(e.target.value)}/>
+      </label>
+      <label className="field">
+        <span className="lbl">profile id (this is what you put in TMC's PlayerProfileName)</span>
+        <input className="mono" value={profileId} onChange={e => setProfileId(e.target.value)}/>
+      </label>
+      <p style={{ color: 'var(--ink-faint)', fontSize: 13 }}>
+        After applying: create a server user, assign this profile to it, and generate an API key on the API keys page.
+      </p>
+      <div className="row between" style={{ marginTop: 14 }}>
+        <button className="btn ghost" onClick={() => close(null)}>cancel</button>
+        <button className="btn primary" disabled={busy} onClick={apply}>{busy ? 'applying…' : 'create role + profile'}</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── SECURITY (profiles, roles, users) ────────────────────────────
+function SecurityPage({ client, envIndex, envName, env, toast, setModal }) {
+  const [tab, setTab] = useState('profiles');
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      let r;
+      if (tab === 'profiles') r = await client.listProfiles();
+      else if (tab === 'roles') r = await client.listRoles();
+      else r = await client.listUsers();
+      setItems(r.hits || []);
+    } catch (e) { toast('error', 'Load failed', e.message); setItems([]); }
+    finally { setLoading(false); }
+  }, [client, tab]);
+  useEffect(() => { load(); }, [load]);
+
+  const newItem = () => setModal(() => (close) => (
+    <NewSecurityItemModal kind={tab} client={client} close={close}
+      onDone={() => { close(null); load(); toast('success', 'Created', ''); }}/>
+  ));
+
+  return (
+    <>
+      <h1 className="page">Profiles & roles</h1>
+      <p className="lead">Roles define what API actions are allowed. Profiles bundle roles with restrictions (e.g. only this index). Users are assigned profiles.</p>
+      <div className="card">
+        <div className="row" style={{ marginBottom: 12 }}>
+          {['profiles','roles','users'].map(t => (
+            <button key={t} className={'btn ' + (tab === t ? 'primary' : 'ghost')} onClick={() => setTab(t)}>{t}</button>
+          ))}
+          <div className="spacer"/>
+          <button className="btn primary" onClick={newItem}>+ new {tab.slice(0,-1)}</button>
+          <button className="btn ghost" onClick={load}>↻</button>
+        </div>
+        <hr className="sep"/>
+        {loading ? <div className="empty">loading…</div> :
+         items.length === 0 ? <div className="empty">No {tab}.</div> :
+         <table className="kt">
+           <thead><tr><th>ID</th><th>Details</th></tr></thead>
+           <tbody>
+             {items.map(it => (
+               <tr key={it._id}>
+                 <td><span className="mono">{it._id}</span></td>
+                 <td><span className="mono" style={{ fontSize: 11, color: 'var(--ink-faint)' }}>
+                   {tab === 'profiles' && it._source?.policies?.map(p => p.roleId).join(', ')}
+                   {tab === 'roles' && Object.keys(it._source?.controllers || {}).join(', ')}
+                   {tab === 'users' && (it._source?.profileIds || []).join(', ')}
+                 </span></td>
+               </tr>
+             ))}
+           </tbody>
+         </table>}
+      </div>
+    </>
+  );
+}
+
+function NewSecurityItemModal({ kind, client, close, onDone }) {
+  const defaultBody = kind === 'profiles' ? `{
+  "policies": [
+    { "roleId": "default" }
+  ]
+}` : kind === 'roles' ? `{
+  "controllers": {
+    "auth": { "actions": { "getCurrentUser": true, "logout": true } },
+    "document": { "actions": { "get": true, "search": true } }
+  }
+}` : `{
+  "content": {
+    "profileIds": ["default"]
+  },
+  "credentials": {
+    "local": { "username": "newuser", "password": "changeMe!" }
+  }
+}`;
+  const [id, setId] = useState('');
+  const [body, setBody] = useState(defaultBody);
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e) => {
+    e.preventDefault(); setBusy(true);
+    try {
+      const parsed = JSON.parse(body);
+      if (kind === 'profiles') await client.createProfile(id, parsed);
+      else if (kind === 'roles') await client.createRole(id, parsed);
+      else await client.createUser(id, parsed);
+      onDone();
+    } catch (er) { alert(er.message); setBusy(false); }
+  };
+
+  return (
+    <form onSubmit={submit}>
+      <h2>New {kind.slice(0,-1)}</h2>
+      <label className="field">
+        <span className="lbl">id</span>
+        <input className="mono" value={id} onChange={e => setId(e.target.value)} required autoFocus/>
+      </label>
+      <label className="field">
+        <span className="lbl">body (JSON)</span>
+        <textarea value={body} onChange={e => setBody(e.target.value)}/>
+      </label>
+      <div className="row between" style={{ marginTop: 14 }}>
+        <button type="button" className="btn ghost" onClick={() => close(null)}>cancel</button>
+        <button className="btn primary" type="submit" disabled={busy || !id}>{busy ? 'creating…' : 'create'}</button>
+      </div>
+    </form>
+  );
+}
+
+// ─── API KEYS ─────────────────────────────────────────────────────
+function ApiKeysPage({ client, envName, env, toast }) {
+  const [userId, setUserId] = useState('');
+  const [desc, setDesc] = useState('TMC server key');
+  const [expires, setExpires] = useState(-1);
+  const [result, setResult] = useState(null);
+  const [busy, setBusy] = useState(false);
+
+  const create = async () => {
+    setBusy(true); setResult(null);
+    try {
+      const r = await client.createApiKey(userId, desc, expires);
+      setResult(r);
+      toast('success', 'API key created', 'Copy it now — it is shown only once.');
+    } catch (e) { toast('error', 'Failed', e.message); }
+    finally { setBusy(false); }
+  };
+
+  return (
+    <>
+      <h1 className="page">API keys</h1>
+      <p className="lead">Generate long-lived tokens for server-to-server use (e.g. TMC's <code>SecretKey</code>). The token is shown only once.</p>
+      <div className="card">
+        <label className="field">
+          <span className="lbl">user id (the user to issue a key for)</span>
+          <input className="mono" value={userId} onChange={e => setUserId(e.target.value)} placeholder="tmc-server-user"/>
+        </label>
+        <label className="field">
+          <span className="lbl">description</span>
+          <input value={desc} onChange={e => setDesc(e.target.value)}/>
+        </label>
+        <label className="field">
+          <span className="lbl">expires (ms; -1 = never)</span>
+          <input type="number" className="mono" value={expires} onChange={e => setExpires(Number(e.target.value))}/>
+        </label>
+        <button className="btn primary" onClick={create} disabled={busy || !userId}>{busy ? 'creating…' : 'generate key'}</button>
+
+        {result && (
+          <div style={{ marginTop: 18 }}>
+            <hr className="sep"/>
+            <strong style={{ color: 'var(--good)' }}>Token (copy now!):</strong>
+            <textarea readOnly className="mono" style={{ minHeight: 100, marginTop: 8 }} value={result.token || JSON.stringify(result, null, 2)}/>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+// ─── SETTINGS ─────────────────────────────────────────────────────
+function SettingsPage({ envs, setEnvs, toast }) {
+  const update = (key, field, val) => setEnvs(e => ({ ...e, [key]: { ...e[key], [field]: val } }));
+  return (
+    <>
+      <h1 className="page">Settings</h1>
+      <p className="lead">Configure your two Kuzzle environments. Changes are kept in memory for this browser session.</p>
+      {['dev','live'].map(k => (
+        <div className="card" key={k}>
+          <h3 style={{ color: k === 'live' ? 'var(--live)' : 'var(--dev)' }}>{k.toUpperCase()}</h3>
+          <div className="row">
+            <label className="field" style={{ flex: 2 }}>
+              <span className="lbl">host</span>
+              <input className="mono" value={envs[k].host} onChange={e => update(k, 'host', e.target.value)}/>
+            </label>
+            <label className="field" style={{ flex: 1 }}>
+              <span className="lbl">port</span>
+              <input type="number" className="mono" value={envs[k].port} onChange={e => update(k, 'port', Number(e.target.value))}/>
+            </label>
+            <label className="field" style={{ flex: 1 }}>
+              <span className="lbl">ssl</span>
+              <select className="mono" value={envs[k].ssl ? '1' : '0'} onChange={e => update(k, 'ssl', e.target.value === '1')}>
+                <option value="1">true</option><option value="0">false</option>
+              </select>
+            </label>
+            <label className="field" style={{ flex: 1 }}>
+              <span className="lbl">tmc index</span>
+              <input className="mono" value={envs[k].index} onChange={e => update(k, 'index', e.target.value)}/>
+            </label>
+          </div>
+        </div>
+      ))}
+      <p style={{ color: 'var(--ink-faint)', fontSize: 13 }}>
+        Note: these settings live in memory only for this session. For a permanent change, edit the
+        <code> ENV_DEFAULTS</code> constant at the top of the HTML file.
+      </p>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

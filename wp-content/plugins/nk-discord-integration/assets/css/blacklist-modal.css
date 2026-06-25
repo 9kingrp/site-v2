@@ -1,0 +1,173 @@
+/* ─── Discord Blacklist Modal ─────────────────────────────────────────── */
+
+.nk-blacklist-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 999999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0);
+	backdrop-filter: blur(0);
+	pointer-events: none;
+	opacity: 0;
+	transition: background 0.3s ease, backdrop-filter 0.3s ease, opacity 0.3s ease;
+}
+
+.nk-blacklist-overlay--visible {
+	background: rgba(0, 0, 0, 0.7);
+	backdrop-filter: blur(6px);
+	pointer-events: auto;
+	opacity: 1;
+}
+
+/* ── Modal box ────────────────────────────────────────────────────────── */
+
+.nk-blacklist-modal {
+	position: relative;
+	width: 90%;
+	max-width: 480px;
+	background: #1e1e24;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 16px;
+	padding: 32px;
+	box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+	color: #e0e0e0;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	transform: scale(0.92) translateY(20px);
+	transition: transform 0.3s ease;
+}
+
+.nk-blacklist-overlay--visible .nk-blacklist-modal {
+	transform: scale(1) translateY(0);
+}
+
+/* ── Close button ─────────────────────────────────────────────────────── */
+
+.nk-blacklist-close {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	background: none;
+	border: none;
+	color: #888;
+	font-size: 24px;
+	line-height: 1;
+	cursor: pointer;
+	padding: 4px 8px;
+	border-radius: 6px;
+	transition: color 0.2s, background 0.2s;
+}
+
+.nk-blacklist-close:hover {
+	color: #fff;
+	background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Header ───────────────────────────────────────────────────────────── */
+
+.nk-blacklist-header {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.nk-blacklist-badge {
+	display: inline-block;
+	background: linear-gradient(135deg, #f04747, #a83232);
+	color: #fff;
+	font-weight: 800;
+	font-size: 11px;
+	letter-spacing: 1.5px;
+	text-transform: uppercase;
+	padding: 5px 14px;
+	border-radius: 20px;
+	margin-bottom: 12px;
+}
+
+.nk-blacklist-header h2 {
+	margin: 0;
+	font-size: 20px;
+	font-weight: 700;
+	color: #ffffff;
+	letter-spacing: -0.3px;
+}
+
+/* ── Icon ─────────────────────────────────────────────────────────────── */
+
+.nk-blacklist-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 20px;
+	width: 64px;
+	height: 64px;
+	background: rgba(240, 71, 71, 0.12);
+	border-radius: 50%;
+	color: #f04747;
+}
+
+.nk-blacklist-icon svg {
+	width: 32px;
+	height: 32px;
+}
+
+/* ── Body ─────────────────────────────────────────────────────────────── */
+
+.nk-blacklist-body {
+	text-align: center;
+}
+
+.nk-blacklist-message {
+	font-size: 15px;
+	color: #c0c0c0;
+	line-height: 1.7;
+	margin: 0 0 24px;
+}
+
+.nk-blacklist-support {
+	font-size: 13px;
+	color: #777;
+	line-height: 1.5;
+	margin: 0 0 24px;
+}
+
+/* ── Button ──────────────────────────────────────────────────────────── */
+
+.nk-blacklist-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 28px;
+	font-size: 14px;
+	font-weight: 600;
+	border: none;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+	min-width: 140px;
+	background: rgba(255, 255, 255, 0.06);
+	color: #999;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nk-blacklist-btn:active {
+	transform: scale(0.97);
+}
+
+.nk-blacklist-btn:hover {
+	background: rgba(255, 255, 255, 0.1);
+	color: #ccc;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+
+@media (max-width: 520px) {
+	.nk-blacklist-modal {
+		padding: 24px 20px;
+		border-radius: 12px;
+	}
+
+	.nk-blacklist-header h2 {
+		font-size: 17px;
+	}
+}

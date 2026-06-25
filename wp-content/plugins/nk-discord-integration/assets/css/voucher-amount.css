@@ -1,0 +1,163 @@
+/* Nine Kings — Voucher Amount Input */
+
+.nk-voucher-amount {
+	margin: 20px 0;
+	width: 100%;
+}
+
+.nk-voucher-amount__label {
+	display: block;
+	font-family: var(--theme-font-h5_font-family, Oswald, sans-serif);
+	font-size: 16px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	margin-bottom: 12px;
+	color: var(--theme-color-text, #fff);
+}
+
+.nk-voucher-amount__wrap {
+	display: flex;
+	align-items: center;
+	border: 2px solid rgba(255, 255, 255, 0.1);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.03);
+	overflow: hidden;
+	transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.nk-voucher-amount__wrap:focus-within {
+	border-color: var(--theme-color-link, #FD6D01);
+	background: rgba(253, 109, 1, 0.04);
+	box-shadow: 0 0 0 2px rgba(253, 109, 1, 0.15);
+}
+
+.nk-voucher-amount__currency {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 16px;
+	font-family: var(--theme-font-h5_font-family, Oswald, sans-serif);
+	font-size: 22px;
+	font-weight: 600;
+	color: var(--theme-color-link, #FD6D01);
+	background: rgba(255, 255, 255, 0.04);
+	border-right: 1px solid rgba(255, 255, 255, 0.08);
+	user-select: none;
+	min-height: 52px;
+}
+
+.nk-voucher-amount__input {
+	flex: 1;
+	border: none !important;
+	outline: none !important;
+	background: transparent !important;
+	padding: 12px 16px !important;
+	font-family: var(--theme-font-h5_font-family, Oswald, sans-serif);
+	font-size: 22px;
+	font-weight: 500;
+	color: var(--theme-color-text, #fff) !important;
+	min-width: 0;
+	box-shadow: none !important;
+	appearance: textfield;
+	-moz-appearance: textfield;
+}
+
+.nk-voucher-amount__input::-webkit-outer-spin-button,
+.nk-voucher-amount__input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.nk-voucher-amount__input::placeholder {
+	color: rgba(255, 255, 255, 0.25);
+}
+
+.nk-voucher-amount__hint {
+	display: block;
+	margin-top: 8px;
+	font-size: 12px;
+	color: rgba(255, 255, 255, 0.45);
+	letter-spacing: 0.02em;
+}
+
+/* Validation error state */
+.nk-voucher-amount--error .nk-voucher-amount__wrap {
+	border-color: #ff3b30;
+	animation: nk-voucher-shake 0.4s ease;
+}
+
+.nk-voucher-amount--error .nk-voucher-amount__label {
+	color: #ff3b30;
+}
+
+@keyframes nk-voucher-shake {
+	0%, 100% { transform: translateX(0); }
+	20%, 60% { transform: translateX(-4px); }
+	40%, 80% { transform: translateX(4px); }
+}
+
+/* ── Voucher product page: hide quantity, fix add-to-cart button ─── */
+
+/* Hide quantity adjuster (CSS fallback in case sold_individually isn't enough) */
+.nk-voucher-product .quantity,
+.nk-voucher-product .e-atc-qty-button-holder .quantity {
+	display: none !important;
+}
+
+/* Make the cart form stack vertically so the amount input sits above the button */
+.nk-voucher-product form.cart {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+/* Style the add-to-cart / Buy Now button */
+.nk-voucher-product form.cart .single_add_to_cart_button,
+.nk-voucher-product form.cart button[type="submit"] {
+	width: 100%;
+	padding: 14px 24px !important;
+	font-family: var(--theme-font-h5_font-family, Oswald, sans-serif);
+	font-size: 16px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: #fff !important;
+	background: var(--theme-color-link, #FD6D01) !important;
+	border: none !important;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background 0.2s ease, transform 0.15s ease;
+	line-height: 1.4;
+	height: auto !important;
+}
+
+.nk-voucher-product form.cart .single_add_to_cart_button:hover,
+.nk-voucher-product form.cart button[type="submit"]:hover {
+	background: #e55f00 !important;
+	transform: translateY(-1px);
+}
+
+/* Fix the Elementor quantity+button wrapper so it doesn't force inline layout */
+.nk-voucher-product .e-atc-qty-button-holder {
+	display: flex;
+	width: 100%;
+}
+
+.nk-voucher-product .e-atc-qty-button-holder .single_add_to_cart_button {
+	flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+	.nk-voucher-amount__currency {
+		padding: 0 12px;
+		font-size: 18px;
+		min-height: 44px;
+	}
+
+	.nk-voucher-amount__input {
+		padding: 10px 12px !important;
+		font-size: 18px;
+	}
+}

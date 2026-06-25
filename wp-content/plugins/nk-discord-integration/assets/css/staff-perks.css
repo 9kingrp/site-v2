@@ -1,0 +1,158 @@
+/* ─── Staff Perks — Product Page ──────────────────────────────────────────── */
+
+.nk-staff-free-vehicle-wrap {
+	margin: 1.5em 0;
+}
+
+.nk-staff-free-vehicle {
+	border-radius: 8px;
+	padding: 16px 20px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.nk-staff-free-vehicle--available {
+	background: linear-gradient(135deg, #1a472a 0%, #2d5a3a 100%);
+	border: 1px solid #3d8b5a;
+	color: #e0f5e8;
+}
+
+.nk-staff-free-vehicle--used {
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.nk-staff-perk-icon {
+	font-size: 1.5em;
+	flex-shrink: 0;
+}
+
+.nk-staff-free-vehicle p {
+	margin: 0;
+	flex: 1;
+	font-size: 0.95em;
+	font-weight: 500;
+}
+
+.nk-staff-claim-btn {
+	background: #4caf50 !important;
+	color: #fff !important;
+	border: none !important;
+	border-radius: 6px !important;
+	padding: 10px 20px !important;
+	font-weight: 600 !important;
+	font-size: 0.9em !important;
+	cursor: pointer !important;
+	transition: background 0.2s, transform 0.1s !important;
+	text-decoration: none !important;
+}
+
+.nk-staff-claim-btn:hover {
+	background: #43a047 !important;
+	transform: translateY(-1px) !important;
+}
+
+.nk-staff-claim-btn:active {
+	transform: translateY(0) !important;
+}
+
+/* ─── Staff Discount Badge — Archive Pages ───────────────────────────────── */
+
+.nk-staff-discount-badge {
+	display: inline-block;
+	background: linear-gradient(135deg, #ff9800, #f57c00);
+	color: #fff;
+	font-size: 0.7em;
+	font-weight: 700;
+	padding: 3px 8px;
+	border-radius: 4px;
+	margin-top: 4px;
+	letter-spacing: 0.3px;
+	text-transform: uppercase;
+}
+
+/* ─── Staff Perks — My Account Dashboard ─────────────────────────────────── */
+
+.nk-staff-perks-dashboard {
+	margin: 2em 0;
+	padding: 24px;
+	border-radius: 10px;
+	background: linear-gradient(135deg, rgba(26, 71, 42, 0.3) 0%, rgba(45, 90, 58, 0.2) 100%);
+	border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.nk-staff-perks-dashboard h3 {
+	margin-top: 0;
+	margin-bottom: 16px;
+	font-size: 1.2em;
+	color: #4caf50;
+}
+
+.nk-staff-perks-list {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.nk-staff-perk-item {
+	padding: 12px 16px;
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.nk-staff-perk-item strong {
+	display: block;
+	margin-bottom: 4px;
+	font-size: 0.95em;
+}
+
+.nk-staff-perk-item p {
+	margin: 0;
+	font-size: 0.88em;
+	opacity: 0.8;
+}
+
+.nk-staff-perk-status--available {
+	color: #4caf50;
+	font-weight: 500;
+}
+
+.nk-staff-perk-status--claimed {
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.nk-staff-browse-btn {
+	display: inline-block;
+	margin-top: 10px;
+	background: #4caf50 !important;
+	color: #fff !important;
+	border: none !important;
+	border-radius: 6px !important;
+	padding: 8px 18px !important;
+	font-weight: 600 !important;
+	font-size: 0.85em !important;
+	text-decoration: none !important;
+	transition: background 0.2s !important;
+}
+
+.nk-staff-browse-btn:hover {
+	background: #43a047 !important;
+}
+
+/* ─── Staff Free Label in Cart ───────────────────────────────────────────── */
+
+.nk-staff-free-label {
+	display: inline-block;
+	background: #4caf50;
+	color: #fff;
+	font-size: 0.75em;
+	font-weight: 700;
+	padding: 2px 8px;
+	border-radius: 4px;
+	margin-left: 6px;
+	vertical-align: middle;
+}

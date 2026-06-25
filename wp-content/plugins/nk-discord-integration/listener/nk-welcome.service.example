@@ -1,0 +1,47 @@
+[Unit]
+Description=Nine Kings — Discord welcome listener
+Documentation=https://github.com/your-org/nine-kings
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+
+# Adjust this path if your WordPress install lives elsewhere.
+WorkingDirectory=/var/www/nine-kings/wp-content/plugins/nk-discord-integration/listener
+
+# Loads DISCORD_BOT_TOKEN, WP_ENDPOINT, WP_SHARED_SECRET, optional GUILD_ID.
+EnvironmentFile=/var/www/nine-kings/wp-content/plugins/nk-discord-integration/listener/.env
+
+ExecStart=/usr/bin/node index.js
+
+# Resilience
+Restart=always
+RestartSec=5s
+StartLimitIntervalSec=60
+StartLimitBurst=10
+
+# Logging — view with: journalctl -u nk-welcome -f
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nk-welcome
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/nine-kings/wp-content/plugins/nk-discord-integration/listener
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LockPersonality=true
+# Note: MemoryDenyWriteExecute is intentionally NOT set — it conflicts with V8's JIT.
+RestrictRealtime=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

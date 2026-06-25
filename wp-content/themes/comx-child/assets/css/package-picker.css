@@ -1,0 +1,146 @@
+/* Nine Kings — Package Option Picker */
+
+.nk-package-picker {
+	margin: 20px 0;
+	width: 100%;
+}
+
+.nk-package-picker__label {
+	display: block;
+	font-family: var(--theme-font-h5_font-family, Oswald, sans-serif);
+	font-size: 16px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	margin-bottom: 12px;
+	color: var(--theme-color-text, #fff);
+}
+
+.nk-package-picker__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: 12px;
+}
+
+/* Individual option card */
+.nk-package-option {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 12px;
+	border: 2px solid rgba(255, 255, 255, 0.1);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.03);
+	cursor: pointer;
+	transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+	outline: none;
+}
+
+.nk-package-option:hover {
+	border-color: rgba(255, 255, 255, 0.25);
+	background: rgba(255, 255, 255, 0.06);
+}
+
+.nk-package-option:focus-visible {
+	border-color: var(--theme-color-link, #FD6D01);
+	box-shadow: 0 0 0 2px rgba(253, 109, 1, 0.3);
+}
+
+/* Selected state */
+.nk-package-option--selected {
+	border-color: var(--theme-color-link, #FD6D01);
+	background: rgba(253, 109, 1, 0.08);
+}
+
+.nk-package-option--selected:hover {
+	border-color: var(--theme-color-link, #FD6D01);
+	background: rgba(253, 109, 1, 0.12);
+}
+
+/* Image container */
+.nk-package-option__image {
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	border-radius: 6px;
+	overflow: hidden;
+	margin-bottom: 8px;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.nk-package-option__image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	transition: transform 0.2s ease;
+}
+
+.nk-package-option:hover .nk-package-option__image img {
+	transform: scale(1.05);
+}
+
+/* Product name */
+.nk-package-option__name {
+	font-size: 13px;
+	font-weight: 500;
+	text-align: center;
+	color: var(--theme-color-text, #fff);
+	line-height: 1.3;
+	word-break: break-word;
+}
+
+/* Checkmark indicator */
+.nk-package-option__check {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: var(--theme-color-link, #FD6D01);
+	color: var(--theme-color-bg_color, #000);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transform: scale(0.5);
+	transition: opacity 0.2s ease, transform 0.2s ease;
+	pointer-events: none;
+}
+
+.nk-package-option--selected .nk-package-option__check {
+	opacity: 1;
+	transform: scale(1);
+}
+
+/* Validation error state */
+.nk-package-picker--error .nk-package-picker__label {
+	color: #ff3b30;
+}
+
+.nk-package-picker--error .nk-package-picker__grid {
+	animation: nk-shake 0.4s ease;
+}
+
+@keyframes nk-shake {
+	0%, 100% { transform: translateX(0); }
+	20%, 60% { transform: translateX(-4px); }
+	40%, 80% { transform: translateX(4px); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+	.nk-package-picker__grid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 8px;
+	}
+
+	.nk-package-option {
+		padding: 8px;
+	}
+
+	.nk-package-option__name {
+		font-size: 12px;
+	}
+}

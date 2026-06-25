@@ -1,0 +1,189 @@
+/* Nine Kings Discord Integration — Front-end Styles */
+
+/* Discord Login Button — matches ComX theme buttons */
+.nk-discord-login-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 12px 17px 12px 17px;
+	background-color: var(--theme-color-link, #FD6D01);
+	color: var(--theme-color-bg_color, #000) !important;
+	font-family: var(--theme-font-button_font-family, var(--theme-font-h5_font-family, Oswald, sans-serif));
+	font-size: var(--theme-font-button_font-size, 14px);
+	font-weight: var(--theme-font-button_font-weight, 500);
+	text-transform: var(--theme-font-button_text-transform, uppercase);
+	letter-spacing: var(--theme-font-button_letter-spacing, 0.04em);
+	text-decoration: none !important;
+	border: 0;
+	border-radius: var(--theme-var-global-border-radius, 0px);
+	cursor: pointer;
+	transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+	line-height: 1.4;
+	box-sizing: border-box;
+}
+
+.nk-discord-login-btn:hover,
+.nk-discord-login-btn:focus {
+	background-color: var(--theme-color-hover, #B85C0F);
+	border-color: var(--theme-color-hover, #B85C0F);
+	color: var(--theme-color-bg_color, #000) !important;
+}
+
+.nk-discord-login-btn:active {
+	opacity: 0.9;
+}
+
+.nk-discord-login-btn svg {
+	flex-shrink: 0;
+}
+
+.nk-discord-login-btn--large {
+	padding: 16px 40px;
+	font-size: 16px;
+}
+
+/* Logged-in state — shows avatar + username */
+.nk-discord-login-btn--logged-in {
+	cursor: default;
+}
+
+.nk-discord-btn-avatar {
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	object-fit: cover;
+	flex-shrink: 0;
+}
+
+/* My Account — Discord login replacement */
+.nk-discord-myaccount-login {
+	text-align: center;
+	padding: 60px 20px;
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+.nk-discord-myaccount-login h2 {
+	margin-bottom: 12px;
+}
+
+.nk-discord-myaccount-login p {
+	margin-bottom: 30px;
+	opacity: 0.8;
+	font-size: 15px;
+}
+
+/* Dashboard Discord info */
+.nk-discord-account-info {
+	margin: 20px 0;
+	padding: 20px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 10px;
+	background: rgba(88, 101, 242, 0.05);
+}
+
+.nk-discord-profile {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.nk-discord-avatar {
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.nk-discord-details {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.nk-discord-details strong {
+	font-size: 18px;
+}
+
+.nk-discord-id {
+	font-size: 13px;
+	opacity: 0.6;
+	font-family: monospace;
+}
+
+/* Link prompt */
+.nk-discord-link-prompt {
+	margin: 20px 0;
+	padding: 20px;
+	border: 1px dashed rgba(88, 101, 242, 0.4);
+	border-radius: 10px;
+	text-align: center;
+}
+
+.nk-discord-link-prompt p {
+	margin-bottom: 16px;
+}
+
+/* Separator */
+.nk-discord-login-separator {
+	display: flex;
+	align-items: center;
+	text-align: center;
+	margin: 20px 0;
+	color: rgba(255, 255, 255, 0.4);
+	font-size: 13px;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.nk-discord-login-separator::before,
+.nk-discord-login-separator::after {
+	content: '';
+	flex: 1;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nk-discord-login-separator span {
+	padding: 0 12px;
+}
+
+/* WooCommerce Discord login section */
+.nk-discord-woo-login {
+	text-align: center;
+	margin-top: 10px;
+}
+
+.nk-discord-woo-login .nk-discord-login-btn {
+	width: 100%;
+}
+
+/* Error messages */
+.nk-discord-error {
+	background: rgba(255, 59, 48, 0.1);
+	border: 1px solid rgba(255, 59, 48, 0.3);
+	color: #ff3b30;
+	padding: 12px 16px;
+	border-radius: 8px;
+	margin-top: 16px;
+	font-size: 14px;
+	text-align: center;
+}
+
+/* Profile card shortcode */
+.nk-discord-profile-card {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px;
+}
+
+.nk-discord-profile-card .nk-discord-avatar {
+	width: 40px;
+	height: 40px;
+}
+
+.nk-discord-profile-info {
+	display: flex;
+	flex-direction: column;
+}
