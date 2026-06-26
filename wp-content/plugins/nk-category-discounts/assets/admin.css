@@ -1,0 +1,108 @@
+.nk-cd-wrap .nk-cd-rule {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-left: 4px solid #2271b1;
+	border-radius: 4px;
+	padding: 12px 16px 4px;
+	margin: 0 0 16px;
+	max-width: 900px;
+}
+
+.nk-cd-rule-head {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin-bottom: 8px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.nk-cd-enabled {
+	font-weight: 600;
+}
+
+.nk-cd-remove {
+	margin-left: auto;
+	color: #b32d2e;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.nk-cd-remove:hover {
+	color: #8a1f1f;
+}
+
+.nk-cd-grid {
+	display: grid;
+	grid-template-columns: 1.4fr 0.8fr 1fr 1fr;
+	gap: 12px 18px;
+	align-items: start;
+}
+
+.nk-cd-field {
+	margin: 0 0 8px;
+	display: flex;
+	flex-direction: column;
+}
+
+.nk-cd-field label {
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.nk-cd-field input[type="text"],
+.nk-cd-field input[type="number"],
+.nk-cd-field input[type="datetime-local"] {
+	width: 100%;
+}
+
+.nk-cd-field-cats {
+	grid-column: 1 / -1;
+}
+
+.nk-cd-cats {
+	width: 100%;
+	max-width: 480px;
+	min-height: 120px;
+}
+
+.nk-cd-field-cats .description {
+	margin-top: 4px;
+}
+
+.nk-cd-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 10px;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1.6;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+
+.nk-cd-badge-live {
+	background: #d5e8d4;
+	color: #1e6f30;
+}
+
+.nk-cd-badge-sched {
+	background: #fff3cd;
+	color: #8a6d00;
+}
+
+.nk-cd-badge-exp,
+.nk-cd-badge-off {
+	background: #e6e6e6;
+	color: #555;
+}
+
+.nk-cd-actions {
+	margin: 8px 0 20px;
+}
+
+@media screen and (max-width: 782px) {
+	.nk-cd-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+}
