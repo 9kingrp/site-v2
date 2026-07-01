@@ -51,10 +51,7 @@ function nk_discord_init() {
 	NK_Discord_1of1::instance();
 	NK_Discord_Blacklist::instance();
 	NK_Discord_BOGO::instance();
-	// Staff Discord discount disabled per request (2026-06-26).
-	// To re-enable the 15% staff discount and its badge/notice/dashboard UI,
-	// uncomment the line below.
-	// NK_Discord_Staff_Perks::instance();
+	NK_Discord_Staff_Perks::instance();
 }
 add_action( 'plugins_loaded', 'nk_discord_init' );
 
