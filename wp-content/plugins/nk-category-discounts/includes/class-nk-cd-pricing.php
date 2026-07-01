@@ -4,6 +4,10 @@
  *
  * The discount is always calculated from the product's REGULAR price, so it
  * overrides any existing sale price while active.
+ *
+ * Voucher ("name your price") products are a special case: they have no fixed
+ * regular price and their price is set from the customer-entered amount at cart
+ * time. Those are handled separately in apply_voucher_discount().
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,6 +46,14 @@ class NK_CD_Pricing {
 
 		// Vary the variation-price cache by the active discount signature.
 		add_filter( 'woocommerce_get_variation_prices_hash', array( $this, 'filter_prices_hash' ), 999, 3 );
+
+		// Voucher ("name your price") products: their price is set from the
+		// customer-entered amount at cart time, so discount that amount AFTER
+		// the voucher plugin (priority 20) has set it.
+		add_action( 'woocommerce_before_calculate_totals', array( $this, 'apply_voucher_discount' ), 30, 1 );
+
+		// Reflect the discount in the voucher "From £X" price label.
+		add_filter( 'woocommerce_get_price_html', array( $this, 'filter_voucher_price_html' ), 20, 2 );
 	}
 
 	/**
@@ -55,6 +67,23 @@ class NK_CD_Pricing {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Is this a voucher ("name your price") product? Those are priced dynamically
+	 * at cart time and must not be touched by the regular-price-based filters.
+	 *
+	 * @param WC_Product $product
+	 * @return bool
+	 */
+	private function is_voucher_product( $product ) {
+		if ( ! $product instanceof WC_Product ) {
+			return false;
+		}
+		if ( ! class_exists( 'NK_Discord_Voucher' ) ) {
+			return false;
+		}
+		return NK_Discord_Voucher::is_voucher_product( $product->get_id() );
 	}
 
 	/**
@@ -75,12 +104,20 @@ class NK_CD_Pricing {
 		if ( '' === $regular || null === $regular || ! is_numeric( $regular ) ) {
 			return null;
 		}
-		$new = (float) $regular * ( 1 - ( $pct / 100 ) );
+		return $this->apply_pct( (float) $regular, $pct );
+	}
+
+	/**
+	 * Apply a percentage discount to a base amount, rounded to store precision.
+	 *
+	 * @param float $amount
+	 * @param float $pct
+	 * @return float
+	 */
+	private function apply_pct( $amount, $pct ) {
+		$new = (float) $amount * ( 1 - ( $pct / 100 ) );
 		$new = round( $new, wc_get_price_decimals() );
-		if ( $new < 0 ) {
-			$new = 0.0;
-		}
-		return $new;
+		return $new < 0 ? 0.0 : $new;
 	}
 
 	/**
@@ -91,7 +128,7 @@ class NK_CD_Pricing {
 	 * @return string
 	 */
 	public function filter_price( $price, $product ) {
-		if ( ! $this->should_apply() ) {
+		if ( ! $this->should_apply() || $this->is_voucher_product( $product ) ) {
 			return $price;
 		}
 		$new = $this->discounted( $product );
@@ -106,7 +143,7 @@ class NK_CD_Pricing {
 	 * @return string
 	 */
 	public function filter_sale_price( $price, $product ) {
-		if ( ! $this->should_apply() ) {
+		if ( ! $this->should_apply() || $this->is_voucher_product( $product ) ) {
 			return $price;
 		}
 		$new = $this->discounted( $product );
@@ -138,7 +175,7 @@ class NK_CD_Pricing {
 	 * @return bool
 	 */
 	public function filter_is_on_sale( $on_sale, $product ) {
-		if ( ! $this->should_apply() ) {
+		if ( ! $this->should_apply() || $this->is_voucher_product( $product ) ) {
 			return $on_sale;
 		}
 		if ( $product->is_type( 'variable' ) ) {
@@ -170,5 +207,62 @@ class NK_CD_Pricing {
 			$hash[] = 'nk_cd:' . $sig;
 		}
 		return $hash;
+	}
+
+	/**
+	 * Discount the customer-entered amount on voucher products at cart time.
+	 * Runs after the voucher plugin (priority 20) has set the raw amount, and
+	 * is idempotent because it always recomputes from the stored amount.
+	 *
+	 * @param WC_Cart $cart
+	 */
+	public function apply_voucher_discount( $cart ) {
+		if ( ! $this->should_apply() ) {
+			return;
+		}
+		if ( ! is_object( $cart ) || ! method_exists( $cart, 'get_cart' ) ) {
+			return;
+		}
+		foreach ( $cart->get_cart() as $cart_item ) {
+			if ( empty( $cart_item['nk_voucher_amount'] ) || empty( $cart_item['data'] ) ) {
+				continue;
+			}
+			$product = $cart_item['data'];
+			$pct     = NK_CD_Rules::get_discount_percentage( $product );
+			if ( $pct <= 0 ) {
+				continue;
+			}
+			$base = (float) $cart_item['nk_voucher_amount'];
+			$product->set_price( $this->apply_pct( $base, $pct ) );
+		}
+	}
+
+	/**
+	 * Reflect the discount in the voucher "From £X" price label, showing the
+	 * original minimum struck through next to the discounted minimum.
+	 *
+	 * @param string     $html
+	 * @param WC_Product $product
+	 * @return string
+	 */
+	public function filter_voucher_price_html( $html, $product ) {
+		if ( ! $this->should_apply() || ! $this->is_voucher_product( $product ) ) {
+			return $html;
+		}
+		$pct = NK_CD_Rules::get_discount_percentage( $product );
+		if ( $pct <= 0 || ! method_exists( 'NK_Discord_Voucher', 'get_voucher_config' ) ) {
+			return $html;
+		}
+		$config = NK_Discord_Voucher::get_voucher_config( $product->get_id() );
+		if ( empty( $config['min'] ) || $config['min'] <= 0 ) {
+			return $html;
+		}
+		$orig = (float) $config['min'];
+		$new  = $this->apply_pct( $orig, $pct );
+		return sprintf(
+			/* translators: %s: formatted price */
+			__( 'From %s', 'nk-category-discounts' ),
+			wc_format_sale_price( wc_price( $orig ), wc_price( $new ) )
+		);
 	}
 }
